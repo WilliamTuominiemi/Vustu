@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 const videoSrc = ref<HTMLVideoElement | null>(null);
 const currentTime = ref(0);
+const sliderTime = ref(0);
 const videoLength = ref(0);
 
 function playVideo() {
@@ -21,6 +22,7 @@ function goTo(seconds: number) {
 function updateCurrentTime() {
   if (videoSrc.value) {
     currentTime.value = videoSrc.value.currentTime;
+    sliderTime.value = videoSrc.value.currentTime;
   }
 }
 
@@ -43,16 +45,24 @@ onUnmounted(() => {
 
 <template>
   <main>
-    <video ref="videoSrc" controls width="600">
+    <video ref="videoSrc" width="600">
       <source src="/video.mp4" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
     <div style="margin-top: 1rem">
       <button @click="playVideo()">Play</button>
       <button @click="pauseVideo()">Pause</button>
-      <button @click="goTo(2)">Go to 2s</button>
+      <input
+        type="range"
+        min="0"
+        step="0.01"
+        :max="videoLength"
+        v-model="sliderTime"
+        @input="goTo(sliderTime)"
+        style="width: 100%"
+      />
+      <p>Current time: {{ currentTime.toFixed(2) }} / {{ videoLength.toFixed(2) }}s</p>
     </div>
-    <p>Current time: {{ currentTime.toFixed(2) }} / {{ videoLength.toFixed(2) }}s</p>
   </main>
 </template>
 
