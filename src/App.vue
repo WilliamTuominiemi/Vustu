@@ -66,7 +66,7 @@ onUnmounted(() => {
       <source src="/video.mp4" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
-    <div style="margin-top: 1rem">
+    <div>
       <button @click="playVideo()">Play</button>
       <button @click="pauseVideo()">Pause</button>
       <input
@@ -86,7 +86,6 @@ onUnmounted(() => {
         @input="goTo(sliderTime)"
         style="width: 100%"
       />
-      <p>Current time: {{ currentTime.toFixed(1) }} / {{ videoLength.toFixed(1) }}s</p>
     </div>
     <TimelineEditor :currentTime :videoLength />
   </main>

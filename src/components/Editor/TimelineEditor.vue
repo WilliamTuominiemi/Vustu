@@ -14,6 +14,7 @@ export default {
   data() {
     return {
       cuts: [] as number[],
+      removedParts: [] as [startTime: number, endTime: number][],
       selectedPart: null as number | null,
     };
   },
@@ -28,19 +29,29 @@ export default {
     selectPart(cut: number) {
       this.selectedPart = cut;
     },
+    clearSelectedPart() {
+      this.selectedPart = null;
+    },
+    removePart() {
+      const endPart = this.selectedPart || this.videoLength;
+      const startPart = this.cuts.find((cut) => cut < endPart) || 0;
+      this.removedParts.push([startPart, endPart]);
+      this.clearSelectedPart();
+    },
   },
 };
 </script>
 
 <template>
-  <div>timeline</div>
-  <p>{{ selectedPart }}</p>
-  <button @click="addCut()">Add Cut</button>
+  {{ selectedPart }}
   <div class="timeline-editor">
     <template v-for="(cut, index) in cuts.concat([videoLength])" :key="index">
       <div
         class="timeline-video"
-        :class="{ selected: selectedPart === cut }"
+        :class="{
+          selected: selectedPart === cut,
+          deleted: removedParts.some((part) => part[1] == cut),
+        }"
         :style="{
           position: 'absolute',
           top: '50%',
@@ -56,6 +67,9 @@ export default {
       :style="{ left: (currentTime / videoLength) * 100 + '%' }"
     ></div>
   </div>
+  <button @click="addCut()">Add Cut</button>
+  <button @click="clearSelectedPart()">Clear Selection</button>
+  <button @click="removePart()">Delete</button>
 </template>
 
 <style scoped>
@@ -64,7 +78,8 @@ export default {
   border: 1px solid #ccc;
   padding: 2px;
   height: 40px;
-  margin-top: 20px;
+  margin-top: 5px;
+  margin-bottom: 5px;
   background-color: #ede8d0;
 }
 
@@ -88,5 +103,10 @@ export default {
 .selected {
   background-color: #285a35;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+.deleted {
+  background-color: #d9534f;
+  opacity: 0.2;
 }
 </style>
