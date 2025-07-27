@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import TimelineEditor from '@/components/Editor/TimelineEditor.vue';
 
 const videoSrc = ref<HTMLVideoElement | null>(null);
 
@@ -87,6 +88,7 @@ onUnmounted(() => {
       />
       <p>Current time: {{ currentTime.toFixed(2) }} / {{ videoLength.toFixed(2) }}s</p>
     </div>
+    <TimelineEditor :currentTime :videoLength />
   </main>
 </template>
 
