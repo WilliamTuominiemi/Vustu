@@ -13,14 +13,24 @@ export default {
   },
   data() {
     return {
-      cuts: [2.3, 4.1] as number[],
+      cuts: [] as number[],
     };
+  },
+  methods: {
+    addCut() {
+      if (this.cuts.includes(this.currentTime)) {
+        return;
+      }
+      this.cuts.push(this.currentTime);
+      this.cuts.sort((a, b) => a - b);
+    },
   },
 };
 </script>
 
 <template>
   <div>timeline</div>
+  <button @click="addCut()">Add Cut</button>
   <div class="timeline-editor">
     <template v-for="(cut, index) in cuts.concat([videoLength])" :key="index">
       <div
