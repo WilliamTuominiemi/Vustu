@@ -1,6 +1,7 @@
 <script lang="ts">
 export default {
   name: 'TimelineEditor',
+  emits: ['update:removedParts'],
   props: {
     currentTime: {
       type: Number,
@@ -10,11 +11,14 @@ export default {
       type: Number,
       required: true,
     },
+    removedParts: {
+      type: Array as () => [number, number][],
+      default: () => [],
+    },
   },
   data() {
     return {
       cuts: [] as number[],
-      removedParts: [] as [startTime: number, endTime: number][],
       selectedPart: null as number | null,
     };
   },
@@ -35,7 +39,8 @@ export default {
     removePart() {
       const endPart = this.selectedPart || this.videoLength;
       const startPart = this.cuts.find((cut) => cut < endPart) || 0;
-      this.removedParts.push([startPart, endPart]);
+      const updatedRemovedParts = [...this.removedParts, [startPart, endPart]];
+      this.$emit('update:removedParts', updatedRemovedParts);
       this.clearSelectedPart();
     },
   },

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import TimelineEditor from '@/components/Editor/TimelineEditor.vue';
 
 const videoSrc = ref<HTMLVideoElement | null>(null);
@@ -8,6 +8,16 @@ const currentTime = ref(0);
 const sliderTime = ref(0);
 const videoLength = ref(0);
 const playbackRate = ref(1);
+const removedParts = ref<[number, number][]>([]);
+
+watch(currentTime, (newTime) => {
+  for (const [start, end] of removedParts.value) {
+    if (newTime >= start && newTime < end) {
+      goTo(end);
+      break;
+    }
+  }
+});
 
 function playVideo() {
   videoSrc.value?.play();
@@ -87,7 +97,11 @@ onUnmounted(() => {
         style="width: 100%"
       />
     </div>
-    <TimelineEditor :currentTime :videoLength />
+    <TimelineEditor
+      :currentTime="currentTime"
+      :videoLength="videoLength"
+      v-model:removedParts="removedParts"
+    />
   </main>
 </template>
 
