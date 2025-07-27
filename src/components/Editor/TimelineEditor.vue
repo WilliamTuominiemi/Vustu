@@ -14,6 +14,7 @@ export default {
   data() {
     return {
       cuts: [] as number[],
+      selectedPart: null as number | null,
     };
   },
   methods: {
@@ -24,17 +25,22 @@ export default {
       this.cuts.push(this.currentTime);
       this.cuts.sort((a, b) => a - b);
     },
+    selectPart(cut: number) {
+      this.selectedPart = cut;
+    },
   },
 };
 </script>
 
 <template>
   <div>timeline</div>
+  <p>{{ selectedPart }}</p>
   <button @click="addCut()">Add Cut</button>
   <div class="timeline-editor">
     <template v-for="(cut, index) in cuts.concat([videoLength])" :key="index">
       <div
         class="timeline-video"
+        :class="{ selected: selectedPart === cut }"
         :style="{
           position: 'absolute',
           top: '50%',
@@ -42,6 +48,7 @@ export default {
           left: (((index === 0 ? 0 : cuts[index - 1]) + 0.01) / videoLength) * 100 + '%',
           width: ((cut - (index === 0 ? 0 : cuts[index - 1]) - 0.02) / videoLength) * 100 + '%',
         }"
+        @click="selectPart(cut)"
       ></div>
     </template>
     <div
@@ -76,5 +83,10 @@ export default {
   height: 30px;
   background-color: #9dc183;
   border-radius: 4px;
+}
+
+.selected {
+  background-color: #285a35;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
 </style>
