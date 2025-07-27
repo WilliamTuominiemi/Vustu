@@ -80,13 +80,13 @@ onUnmounted(() => {
       <input
         type="range"
         min="0"
-        step="0.01"
+        step="0.1"
         :max="videoLength"
         v-model="sliderTime"
         @input="goTo(sliderTime)"
         style="width: 100%"
       />
-      <p>Current time: {{ currentTime.toFixed(2) }} / {{ videoLength.toFixed(2) }}s</p>
+      <p>Current time: {{ currentTime.toFixed(1) }} / {{ videoLength.toFixed(1) }}s</p>
     </div>
     <TimelineEditor :currentTime :videoLength />
   </main>

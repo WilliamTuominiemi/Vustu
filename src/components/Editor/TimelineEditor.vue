@@ -11,17 +11,33 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      cuts: [2.3, 4.1] as number[],
+    };
+  },
 };
 </script>
 
 <template>
   <div>timeline</div>
   <div class="timeline-editor">
+    <template v-for="(cut, index) in cuts.concat([videoLength])" :key="index">
+      <div
+        class="timeline-video"
+        :style="{
+          position: 'absolute',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          left: (((index === 0 ? 0 : cuts[index - 1]) + 0.01) / videoLength) * 100 + '%',
+          width: ((cut - (index === 0 ? 0 : cuts[index - 1]) - 0.02) / videoLength) * 100 + '%',
+        }"
+      ></div>
+    </template>
     <div
       class="progress-indicator"
       :style="{ left: (currentTime / videoLength) * 100 + '%' }"
     ></div>
-    <div class="timeline-video"></div>
   </div>
 </template>
 
@@ -29,7 +45,7 @@ export default {
 .timeline-editor {
   position: relative;
   border: 1px solid #ccc;
-  padding: 3px;
+  padding: 2px;
   height: 40px;
   margin-top: 20px;
   background-color: #ede8d0;
@@ -47,8 +63,7 @@ export default {
 }
 
 .timeline-video {
-  width: 100%;
-  height: 100%;
+  height: 30px;
   background-color: #9dc183;
   border-radius: 4px;
 }
