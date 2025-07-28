@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import TimelineEditor from '@/components/Editor/TimelineEditor.vue';
+import VideoControls from '@/components/Editor/VideoControls.vue';
 
 const videoSrc = ref<HTMLVideoElement | null>(null);
 
@@ -76,27 +77,17 @@ onUnmounted(() => {
       <source src="/video.mp4" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
-    <div>
-      <button @click="playVideo()">Play</button>
-      <button @click="pauseVideo()">Pause</button>
-      <input
-        type="number"
-        min="0.25"
-        step="0.25"
-        v-model="playbackRate"
-        @input="updatePlaybackRate(playbackRate)"
-        style="width: 100px; margin-right: 1rem"
-      />
-      <input
-        type="range"
-        min="0"
-        step="0.1"
-        :max="videoLength"
-        v-model="sliderTime"
-        @input="goTo(sliderTime)"
-        style="width: 100%"
-      />
-    </div>
+
+    <VideoControls
+      :videoLength="videoLength"
+      :playbackRate="playbackRate"
+      :sliderTime="sliderTime"
+      @play="playVideo"
+      @pause="pauseVideo"
+      @update-playback-rate="updatePlaybackRate"
+      @go-to="goTo"
+    />
+
     <TimelineEditor
       :currentTime="currentTime"
       :videoLength="videoLength"

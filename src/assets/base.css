@@ -11,3 +11,12 @@ body {
   font-size: 15px;
   margin: 0;
 }
+
+.clickable {
+  cursor: pointer;
+  transition: transform 0.1s ease-in-out;
+}
+
+.clickable:active {
+  transform: scale(0.95);
+}
