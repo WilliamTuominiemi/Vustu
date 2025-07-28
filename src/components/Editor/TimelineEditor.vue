@@ -43,7 +43,10 @@ export default {
     removePart() {
       if (this.selectedPart == null) return;
       const endPart = this.selectedPart || this.videoLength;
-      const startPart = this.cuts.find((cut) => cut < endPart) || 0;
+      const startPart =
+        endPart == this.videoLength
+          ? this.cuts[this.cuts.length - 1]
+          : this.cuts.find((cut) => cut < endPart) || 0;
       const updatedRemovedParts = [...this.removedParts, [startPart, endPart]];
       this.$emit('update:removedParts', updatedRemovedParts);
       this.clearSelectedPart();
