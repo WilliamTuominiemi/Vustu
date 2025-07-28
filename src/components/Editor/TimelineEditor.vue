@@ -31,6 +31,10 @@ export default {
       this.cuts.sort((a, b) => a - b);
     },
     selectPart(cut: number) {
+      if (this.selectedPart == cut) {
+        this.clearSelectedPart();
+        return;
+      }
       this.selectedPart = cut;
     },
     clearSelectedPart() {
@@ -48,7 +52,6 @@ export default {
 </script>
 
 <template>
-  {{ selectedPart }}
   <div class="timeline-editor">
     <template v-for="(cut, index) in cuts.concat([videoLength])" :key="index">
       <div

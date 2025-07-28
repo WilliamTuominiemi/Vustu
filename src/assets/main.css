@@ -1,14 +1,7 @@
 @import './base.css';
 
 #app {
-  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
-}
-
-a {
-  color: #27ae60;
-  text-decoration: none;
 }
 
 @media (min-width: 1024px) {
@@ -16,7 +9,5 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  #app {
   }
 }
