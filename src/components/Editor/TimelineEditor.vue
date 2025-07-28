@@ -54,7 +54,10 @@ export default {
     returnRemovedPart() {
       if (this.selectedPart == null) return;
       const endPart = this.selectedPart || this.videoLength;
-      const startPart = this.cuts.find((cut) => cut < endPart) || 0;
+      const startPart =
+        endPart == this.videoLength
+          ? this.cuts[this.cuts.length - 1]
+          : this.cuts.find((cut) => cut < endPart) || 0;
       const partIndex = this.removedParts.findIndex(
         (part) => part[0] === startPart && part[1] === endPart,
       );
