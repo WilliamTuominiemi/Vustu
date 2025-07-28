@@ -12,10 +12,12 @@ const playbackRate = ref(1);
 const removedParts = ref<[number, number][]>([]);
 
 watch(currentTime, (newTime) => {
-  for (const [start, end] of removedParts.value) {
-    if (newTime >= start && newTime < end) {
-      goTo(end);
-      break;
+  if (videoSrc.value && !videoSrc.value.paused) {
+    for (const [start, end] of removedParts.value) {
+      if (newTime >= start && newTime < end) {
+        goTo(end);
+        break;
+      }
     }
   }
 });
