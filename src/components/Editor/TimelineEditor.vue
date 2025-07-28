@@ -41,10 +41,25 @@ export default {
       this.selectedPart = null;
     },
     removePart() {
+      if (this.selectedPart == null) return;
       const endPart = this.selectedPart || this.videoLength;
       const startPart = this.cuts.find((cut) => cut < endPart) || 0;
       const updatedRemovedParts = [...this.removedParts, [startPart, endPart]];
       this.$emit('update:removedParts', updatedRemovedParts);
+      this.clearSelectedPart();
+    },
+    returnRemovedPart() {
+      if (this.selectedPart == null) return;
+      const endPart = this.selectedPart || this.videoLength;
+      const startPart = this.cuts.find((cut) => cut < endPart) || 0;
+      const partIndex = this.removedParts.findIndex(
+        (part) => part[0] === startPart && part[1] === endPart,
+      );
+      if (partIndex !== -1) {
+        const updatedRemovedParts = [...this.removedParts];
+        updatedRemovedParts.splice(partIndex, 1);
+        this.$emit('update:removedParts', updatedRemovedParts);
+      }
       this.clearSelectedPart();
     },
   },
@@ -75,9 +90,11 @@ export default {
       :style="{ left: (currentTime / videoLength) * 100 + '%' }"
     ></div>
   </div>
-  <button @click="addCut()">Add Cut</button>
-  <button @click="clearSelectedPart()">Clear Selection</button>
-  <button @click="removePart()">Delete</button>
+  <div class="buttons">
+    <button @click="addCut()">✂️</button>
+    <button @click="removePart()">🗑️</button>
+    <button @click="returnRemovedPart()">↩️</button>
+  </div>
 </template>
 
 <style scoped>
@@ -116,5 +133,20 @@ export default {
 .deleted {
   background-color: #d9534f;
   opacity: 0.2;
+}
+
+.selected.deleted {
+  opacity: 0.7 !important;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+button {
+  font-size: 2rem;
 }
 </style>

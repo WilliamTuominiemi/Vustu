@@ -80,22 +80,37 @@ onUnmounted(() => {
       Your browser does not support the video tag.
     </video>
 
-    <VideoControls
-      :videoLength="videoLength"
-      :playbackRate="playbackRate"
-      :sliderTime="sliderTime"
-      @play="playVideo"
-      @pause="pauseVideo"
-      @update-playback-rate="updatePlaybackRate"
-      @go-to="goTo"
-    />
+    <div class="interface">
+      <VideoControls
+        :videoLength="videoLength"
+        :playbackRate="playbackRate"
+        :sliderTime="sliderTime"
+        @play="playVideo"
+        @pause="pauseVideo"
+        @update-playback-rate="updatePlaybackRate"
+        @go-to="goTo"
+      />
 
-    <TimelineEditor
-      :currentTime="currentTime"
-      :videoLength="videoLength"
-      v-model:removedParts="removedParts"
-    />
+      <TimelineEditor
+        :currentTime="currentTime"
+        :videoLength="videoLength"
+        v-model:removedParts="removedParts"
+      />
+    </div>
   </main>
 </template>
 
-<style scoped></style>
+<style scoped>
+video {
+  margin: 5px;
+  border-radius: 10px;
+  height: 60vh;
+}
+
+.interface {
+  border: 1px solid black;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 10px;
+}
+</style>

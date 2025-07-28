@@ -8,6 +8,7 @@
           id="playback-rate"
           type="number"
           min="0.25"
+          max="8"
           step="0.25"
           v-model="localPlaybackRate"
           @input="$emit('update-playback-rate', localPlaybackRate)"
@@ -60,7 +61,6 @@ watch(
 .controls {
   display: flex;
   flex-direction: column;
-  padding: 5px 0;
 }
 
 .playback-controls {
