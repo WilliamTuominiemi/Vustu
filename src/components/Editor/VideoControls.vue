@@ -11,7 +11,7 @@
           step="0.25"
           v-model="localPlaybackRate"
           @input="$emit('update-playback-rate', localPlaybackRate)"
-          style="width: 90px"
+          style="width: 90px; font-size: inherit"
         />x
       </div>
     </div>
