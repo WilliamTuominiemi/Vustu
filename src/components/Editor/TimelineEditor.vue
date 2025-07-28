@@ -1,75 +1,75 @@
-<script lang="ts">
-export default {
-  name: 'TimelineEditor',
-  emits: ['update:removedParts'],
-  props: {
-    currentTime: {
-      type: Number,
-      required: true,
-    },
-    videoLength: {
-      type: Number,
-      required: true,
-    },
-    removedParts: {
-      type: Array as () => [number, number][],
-      default: () => [],
-    },
+<script setup lang="ts">
+import { ref, defineProps, defineEmits } from 'vue';
+
+const props = defineProps({
+  currentTime: {
+    type: Number,
+    required: true,
   },
-  data() {
-    return {
-      cuts: [] as number[],
-      selectedPart: null as number | null,
-    };
+  videoLength: {
+    type: Number,
+    required: true,
   },
-  methods: {
-    addCut() {
-      if (this.cuts.includes(this.currentTime)) {
-        return;
-      }
-      this.cuts.push(this.currentTime);
-      this.cuts.sort((a, b) => a - b);
-    },
-    selectPart(cut: number) {
-      if (this.selectedPart == cut) {
-        this.clearSelectedPart();
-        return;
-      }
-      this.selectedPart = cut;
-    },
-    clearSelectedPart() {
-      this.selectedPart = null;
-    },
-    removePart() {
-      if (this.selectedPart == null) return;
-      const endPart = this.selectedPart || this.videoLength;
-      const startPart =
-        endPart == this.videoLength
-          ? this.cuts[this.cuts.length - 1]
-          : this.cuts.find((cut) => cut < endPart) || 0;
-      const updatedRemovedParts = [...this.removedParts, [startPart, endPart]];
-      this.$emit('update:removedParts', updatedRemovedParts);
-      this.clearSelectedPart();
-    },
-    returnRemovedPart() {
-      if (this.selectedPart == null) return;
-      const endPart = this.selectedPart || this.videoLength;
-      const startPart =
-        endPart == this.videoLength
-          ? this.cuts[this.cuts.length - 1]
-          : this.cuts.find((cut) => cut < endPart) || 0;
-      const partIndex = this.removedParts.findIndex(
-        (part) => part[0] === startPart && part[1] === endPart,
-      );
-      if (partIndex !== -1) {
-        const updatedRemovedParts = [...this.removedParts];
-        updatedRemovedParts.splice(partIndex, 1);
-        this.$emit('update:removedParts', updatedRemovedParts);
-      }
-      this.clearSelectedPart();
-    },
+  removedParts: {
+    type: Array as () => [number, number][],
+    default: () => [],
   },
-};
+});
+
+const emit = defineEmits(['update:removedParts']);
+
+const cuts = ref<number[]>([]);
+const selectedPart = ref<number | null>(null);
+
+function addCut() {
+  if (cuts.value.includes(props.currentTime)) {
+    return;
+  }
+  cuts.value.push(props.currentTime);
+  cuts.value.sort((a, b) => a - b);
+}
+
+function selectPart(cut: number) {
+  if (selectedPart.value === cut) {
+    clearSelectedPart();
+    return;
+  }
+  selectedPart.value = cut;
+}
+
+function clearSelectedPart() {
+  selectedPart.value = null;
+}
+
+function removePart() {
+  if (selectedPart.value == null) return;
+  const endPart = selectedPart.value || props.videoLength;
+  const startPart =
+    endPart === props.videoLength
+      ? cuts.value[cuts.value.length - 1]
+      : cuts.value.find((cut) => cut < endPart) || 0;
+  const updatedRemovedParts = [...props.removedParts, [startPart, endPart]];
+  emit('update:removedParts', updatedRemovedParts);
+  clearSelectedPart();
+}
+
+function returnRemovedPart() {
+  if (selectedPart.value == null) return;
+  const endPart = selectedPart.value || props.videoLength;
+  const startPart =
+    endPart === props.videoLength
+      ? cuts.value[cuts.value.length - 1]
+      : cuts.value.find((cut) => cut < endPart) || 0;
+  const partIndex = props.removedParts.findIndex(
+    (part) => part[0] === startPart && part[1] === endPart,
+  );
+  if (partIndex !== -1) {
+    const updatedRemovedParts = [...props.removedParts];
+    updatedRemovedParts.splice(partIndex, 1);
+    emit('update:removedParts', updatedRemovedParts);
+  }
+  clearSelectedPart();
+}
 </script>
 
 <template>
