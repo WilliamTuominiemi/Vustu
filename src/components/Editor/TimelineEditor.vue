@@ -16,7 +16,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update:removedParts']);
+const emit = defineEmits(['update:removedParts', 'changeVideo']);
 
 const cuts = ref<number[]>([]);
 const selectedPart = ref<number | null>(null);
@@ -97,9 +97,14 @@ function returnRemovedPart() {
     ></div>
   </div>
   <div class="buttons">
-    <button @click="addCut()">✂️</button>
-    <button @click="removePart()">🗑️</button>
-    <button @click="returnRemovedPart()">↩️</button>
+    <div class="editing-buttons">
+      <button @click="addCut()">✂️</button>
+      <button @click="removePart()">🗑️</button>
+      <button @click="returnRemovedPart()">↩️</button>
+    </div>
+    <div class="management-buttons">
+      <button @click="emit('changeVideo')">⏏️</button>
+    </div>
   </div>
 </template>
 
@@ -147,8 +152,18 @@ function returnRemovedPart() {
 
 .buttons {
   display: flex;
+  justify-content: space-between;
+}
+
+.editing-buttons {
+  display: flex;
   flex-direction: row;
-  align-items: center;
+  gap: 10px;
+}
+
+.management-buttons {
+  display: flex;
+  flex-direction: row;
   gap: 10px;
 }
 

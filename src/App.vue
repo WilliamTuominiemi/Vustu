@@ -65,6 +65,16 @@ function updatePlaybackRate(rate: number) {
 function handleRateChange(rate: number) {
   playbackRate.value = rate;
 }
+
+function changeVideo() {
+  videoSrc.value = '';
+  if (videoPreviewRef.value) {
+    videoPreviewRef.value.videoRef?.pause();
+    videoPreviewRef.value.videoRef = null;
+    updateCurrentTime(0);
+    updateVideoLength(0);
+  }
+}
 </script>
 
 <template>
@@ -91,6 +101,7 @@ function handleRateChange(rate: number) {
       <TimelineEditor
         :currentTime="currentTime"
         :videoLength="videoLength"
+        @changeVideo="changeVideo"
         v-model:removedParts="removedParts"
       />
     </div>
