@@ -105,12 +105,12 @@ function ejectVideo() {
   </div>
   <div class="buttons">
     <div class="editing-buttons">
-      <button @click="addCut()">✂️</button>
-      <button @click="removePart()">🗑️</button>
-      <button @click="returnRemovedPart()">↩️</button>
+      <button @click="addCut()" title="Create cut">✂️</button>
+      <button @click="removePart()" title="Remove part">🗑️</button>
+      <button @click="returnRemovedPart()" title="Return removed part">↩️</button>
     </div>
     <div class="management-buttons">
-      <button @click="ejectVideo">⏏️</button>
+      <button @click="ejectVideo" title="Remove video from timeline">⏏️</button>
     </div>
   </div>
 </template>

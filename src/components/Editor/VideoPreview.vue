@@ -73,15 +73,18 @@ onUnmounted(() => {
       <source :src="localSrc" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
-    <div v-else>
-      <p>No video source provided.</p>
-      <input
-        type="file"
-        id="video-upload"
-        name="video-upload"
-        accept="video/mp4,video/webm,video/ogg,image/gif"
-        @change="onFileChange"
-      />
+    <div v-else class="videoUpload">
+      <label for="video-upload" class="videoInput clickable">
+        Choose a video file
+        <input
+          type="file"
+          id="video-upload"
+          name="video-upload"
+          accept="video/mp4,video/webm,video/ogg,image/gif"
+          @change="onFileChange"
+          style="display: none"
+        />
+      </label>
     </div>
   </div>
 </template>
@@ -106,5 +109,22 @@ video {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.videoUpload {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.videoInput {
+  cursor: pointer;
+  display: inline-block;
+  padding: 6px 12px;
+  background: #ede8d0;
+  border: 1px solid #ccc;
 }
 </style>

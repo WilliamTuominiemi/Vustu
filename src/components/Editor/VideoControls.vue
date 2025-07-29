@@ -2,11 +2,12 @@
   <div class="controls">
     <div class="playback-controls">
       <div class="playback-buttons">
-        <div class="clickable" @click="$emit('play')">▶️</div>
-        <div class="clickable" @click="$emit('pause')">⏸️</div>
+        <div class="clickable" @click="$emit('play')" title="Play">▶️</div>
+        <div class="clickable" @click="$emit('pause')" title="Pause">⏸️</div>
         <div>
           <input
             id="playback-rate"
+            title="Playback rate"
             type="number"
             min="0.25"
             max="8"
