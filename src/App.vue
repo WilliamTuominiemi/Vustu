@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, watch } from 'vue';
 import TimelineEditor from '@/components/Editor/TimelineEditor.vue';
 import VideoControls from '@/components/Editor/VideoControls.vue';
+import VideoPreview from '@/components/Editor/VideoPreview.vue';
 
-const videoSrc = ref<HTMLVideoElement | null>(null);
+const videoPreviewRef = ref<{ videoRef: HTMLVideoElement | null } | null>(null);
 
 const currentTime = ref(0);
 const sliderTime = ref(0);
@@ -11,8 +12,13 @@ const videoLength = ref(0);
 const playbackRate = ref(1);
 const removedParts = ref<[number, number][]>([]);
 
+function getVideoEl() {
+  return videoPreviewRef.value?.videoRef ?? null;
+}
+
 watch(currentTime, (newTime) => {
-  if (videoSrc.value && !videoSrc.value.paused) {
+  const video = getVideoEl();
+  if (video && !video.paused) {
     for (const [start, end] of removedParts.value) {
       if (newTime >= start && newTime < end) {
         goTo(end);
@@ -23,62 +29,51 @@ watch(currentTime, (newTime) => {
 });
 
 function playVideo() {
-  videoSrc.value?.play();
+  getVideoEl()?.play();
 }
 
 function pauseVideo() {
-  videoSrc.value?.pause();
+  getVideoEl()?.pause();
 }
 
 function goTo(seconds: number) {
-  if (videoSrc.value) {
-    videoSrc.value.currentTime = seconds;
+  const video = getVideoEl();
+  if (video) {
+    video.currentTime = seconds;
   }
 }
 
-function updateCurrentTime() {
-  if (videoSrc.value) {
-    currentTime.value = videoSrc.value.currentTime;
-    sliderTime.value = videoSrc.value.currentTime;
-  }
+function updateCurrentTime(time: number) {
+  currentTime.value = time;
+  sliderTime.value = time;
 }
 
-function updateVideoLength() {
-  if (videoSrc.value) {
-    videoLength.value = videoSrc.value.duration;
-  }
+function updateVideoLength(length: number) {
+  videoLength.value = length;
 }
 
 function updatePlaybackRate(rate: number) {
-  if (videoSrc.value) {
-    videoSrc.value.playbackRate = rate;
+  const video = getVideoEl();
+  if (video) {
+    video.playbackRate = rate;
     playbackRate.value = rate;
   }
 }
 
-onMounted(() => {
-  videoSrc.value?.addEventListener('timeupdate', updateCurrentTime);
-  videoSrc.value?.addEventListener('loadedmetadata', updateVideoLength);
-  videoSrc.value?.addEventListener('ratechange', () => {
-    playbackRate.value = videoSrc.value?.playbackRate || 1;
-  });
-});
-
-onUnmounted(() => {
-  videoSrc.value?.removeEventListener('timeupdate', updateCurrentTime);
-  videoSrc.value?.removeEventListener('loadedmetadata', updateVideoLength);
-  videoSrc.value?.removeEventListener('ratechange', () => {
-    playbackRate.value = videoSrc.value?.playbackRate || 1;
-  });
-});
+function handleRateChange(rate: number) {
+  playbackRate.value = rate;
+}
 </script>
 
 <template>
   <main>
-    <video ref="videoSrc">
-      <source src="/video.mp4" type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
+    <VideoPreview
+      ref="videoPreviewRef"
+      src="/video.mp4"
+      @timeupdate="updateCurrentTime"
+      @loadedmetadata="updateVideoLength"
+      @ratechange="handleRateChange"
+    />
 
     <div class="interface">
       <VideoControls
