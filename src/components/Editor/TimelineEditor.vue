@@ -20,6 +20,7 @@ const emit = defineEmits(['update:removedParts', 'changeVideo']);
 
 const cuts = ref<number[]>([]);
 const selectedPart = ref<number | null>(null);
+const hoveredCut = ref<number | null>(null);
 
 function addCut() {
   if (cuts.value.includes(props.currentTime)) {
@@ -37,8 +38,16 @@ function selectPart(cut: number) {
   selectedPart.value = cut;
 }
 
+function removeCut(cut: number) {
+  cuts.value = cuts.value.filter((c) => c !== cut);
+}
+
 function clearSelectedPart() {
   selectedPart.value = null;
+}
+
+function clearHoveredCut() {
+  hoveredCut.value = null;
 }
 
 function removePart() {
@@ -97,6 +106,24 @@ function ejectVideo() {
         }"
         @click="selectPart(cut)"
       ></div>
+      <div>
+        <div
+          v-if="videoLength != 0 && index < cuts.length"
+          class="cut-indicator"
+          :class="{ hovered: hoveredCut === cut }"
+          @mouseover="hoveredCut = cut"
+          @mouseleave="clearHoveredCut()"
+          :style="{
+            position: 'absolute',
+            left: (cut / videoLength) * 100 + '%',
+            transform: 'translateX(-50%)',
+            width: '10px',
+            height: '100%',
+            zIndex: 10,
+          }"
+          @click="removeCut(cut)"
+        ></div>
+      </div>
     </template>
     <div
       class="progress-indicator"
@@ -155,6 +182,16 @@ function ejectVideo() {
 
 .selected.deleted {
   opacity: 0.7 !important;
+}
+
+.cut-indicator {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 5px;
+}
+
+.hovered {
+  background-color: #ff746c;
 }
 
 .buttons {
