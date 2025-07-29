@@ -1,19 +1,24 @@
 <template>
   <div class="controls">
     <div class="playback-controls">
-      <div class="clickable" @click="$emit('play')">▶️</div>
-      <div class="clickable" @click="$emit('pause')">⏸️</div>
-      <div>
-        <input
-          id="playback-rate"
-          type="number"
-          min="0.25"
-          max="8"
-          step="0.25"
-          v-model="localPlaybackRate"
-          @input="$emit('update-playback-rate', localPlaybackRate)"
-          style="width: 90px; font-size: inherit"
-        />x
+      <div class="playback-buttons">
+        <div class="clickable" @click="$emit('play')">▶️</div>
+        <div class="clickable" @click="$emit('pause')">⏸️</div>
+        <div>
+          <input
+            id="playback-rate"
+            type="number"
+            min="0.25"
+            max="8"
+            step="0.25"
+            v-model="localPlaybackRate"
+            @input="$emit('update-playback-rate', localPlaybackRate)"
+            style="width: 90px; font-size: inherit"
+          />x
+        </div>
+      </div>
+      <div v-if="props.videoLength != 0" class="time-display">
+        <span>{{ localSliderTime.toFixed(1) }} / {{ props.videoLength.toFixed(1) }}</span>
       </div>
     </div>
     <input
@@ -65,9 +70,13 @@ watch(
 
 .playback-controls {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
+  justify-content: space-between;
   font-size: 2rem;
+}
+
+.playback-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }
 </style>

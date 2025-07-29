@@ -88,8 +88,6 @@ function handleRateChange(rate: number) {
         @go-to="goTo"
       />
 
-      {{ currentTime }} / {{ videoLength }}
-
       <TimelineEditor
         :currentTime="currentTime"
         :videoLength="videoLength"
