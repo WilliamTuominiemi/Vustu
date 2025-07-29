@@ -173,8 +173,4 @@ function ejectVideo() {
   flex-direction: row;
   gap: 10px;
 }
-
-button {
-  font-size: 2rem;
-}
 </style>

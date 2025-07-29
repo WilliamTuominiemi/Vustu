@@ -2,9 +2,9 @@
   <div class="controls">
     <div class="playback-controls">
       <div class="playback-buttons">
-        <div class="clickable" @click="$emit('play')" title="Play">▶️</div>
-        <div class="clickable" @click="$emit('pause')" title="Pause">⏸️</div>
-        <div>
+        <button class="clickable" @click="$emit('play')" title="Play">▶️</button>
+        <button class="clickable" @click="$emit('pause')" title="Pause">⏸️</button>
+        <div style="height: 100%">
           <input
             id="playback-rate"
             title="Playback rate"
@@ -15,7 +15,7 @@
             v-model="localPlaybackRate"
             @input="$emit('update-playback-rate', localPlaybackRate)"
             style="width: 90px; font-size: inherit"
-          />x
+          />⏲️
         </div>
       </div>
       <div v-if="props.videoLength != 0" class="time-display">
@@ -79,5 +79,11 @@ watch(
   display: flex;
   flex-direction: row;
   gap: 10px;
+}
+
+.time-display {
+  display: flex;
+  align-items: center;
+  font-size: 2rem;
 }
 </style>
