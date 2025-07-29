@@ -6,6 +6,8 @@ import VideoPreview from '@/components/Editor/VideoPreview.vue';
 
 const videoPreviewRef = ref<{ videoRef: HTMLVideoElement | null } | null>(null);
 
+const videoSrc = ref('');
+
 const currentTime = ref(0);
 const sliderTime = ref(0);
 const videoLength = ref(0);
@@ -69,7 +71,7 @@ function handleRateChange(rate: number) {
   <main>
     <VideoPreview
       ref="videoPreviewRef"
-      src="/video.mp4"
+      v-model:src="videoSrc"
       @timeupdate="updateCurrentTime"
       @loadedmetadata="updateVideoLength"
       @ratechange="handleRateChange"
@@ -86,6 +88,8 @@ function handleRateChange(rate: number) {
         @go-to="goTo"
       />
 
+      {{ currentTime }} / {{ videoLength }}
+
       <TimelineEditor
         :currentTime="currentTime"
         :videoLength="videoLength"
@@ -96,12 +100,6 @@ function handleRateChange(rate: number) {
 </template>
 
 <style scoped>
-video {
-  margin: 5px;
-  border-radius: 10px;
-  height: 60vh;
-}
-
 .interface {
   border: 1px solid black;
   border-radius: 10px;
