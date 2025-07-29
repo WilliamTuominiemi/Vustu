@@ -70,12 +70,19 @@ function returnRemovedPart() {
   }
   clearSelectedPart();
 }
+
+function ejectVideo() {
+  emit('changeVideo');
+  clearSelectedPart();
+  cuts.value = [];
+}
 </script>
 
 <template>
   <div class="timeline-editor">
     <template v-for="(cut, index) in cuts.concat([videoLength])" :key="index">
       <div
+        v-if="videoLength != 0"
         class="timeline-video"
         :class="{
           selected: selectedPart === cut,
@@ -103,7 +110,7 @@ function returnRemovedPart() {
       <button @click="returnRemovedPart()">↩️</button>
     </div>
     <div class="management-buttons">
-      <button @click="emit('changeVideo')">⏏️</button>
+      <button @click="ejectVideo">⏏️</button>
     </div>
   </div>
 </template>
