@@ -19,7 +19,7 @@
         </div>
       </div>
       <div v-if="props.videoLength != 0" class="time-display">
-        <span>{{ localSliderTime.toFixed(1) }} / {{ props.videoLength.toFixed(1) }}</span>
+        <span>{{ localSliderTime }} / {{ props.videoLength.toFixed(1) }}</span>
       </div>
     </div>
     <input
@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, toRefs } from 'vue';
 
 const props = defineProps<{
   videoLength: number;
@@ -45,22 +45,18 @@ const props = defineProps<{
 
 defineEmits(['play', 'pause', 'update-playback-rate', 'go-to']);
 
-const localPlaybackRate = ref(props.playbackRate);
-const localSliderTime = ref(props.sliderTime);
+const { videoLength, playbackRate, sliderTime } = toRefs(props);
 
-watch(
-  () => props.playbackRate,
-  (newValue) => {
-    localPlaybackRate.value = newValue;
-  },
-);
+const localPlaybackRate = ref(playbackRate.value);
+const localSliderTime = ref(sliderTime.value);
 
-watch(
-  () => props.sliderTime,
-  (newValue) => {
-    localSliderTime.value = newValue;
-  },
-);
+watch(playbackRate, (newValue) => {
+  localPlaybackRate.value = newValue;
+});
+
+watch(sliderTime, (newValue) => {
+  localSliderTime.value = newValue;
+});
 </script>
 
 <style>
