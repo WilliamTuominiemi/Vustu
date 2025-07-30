@@ -1,3 +1,25 @@
+<template>
+  <div class="videoWrapper">
+    <video v-if="localSrc" ref="videoRef" :key="localSrc">
+      <source :src="localSrc" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+    <div v-else class="videoUpload">
+      <label for="video-upload" class="videoInput clickable">
+        Choose a video file
+        <input
+          type="file"
+          id="video-upload"
+          name="video-upload"
+          accept="video/mp4,video/webm,video/ogg,image/gif"
+          @change="onFileChange"
+          style="display: none"
+        />
+      </label>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, defineProps, defineEmits, watch } from 'vue';
 
@@ -66,28 +88,6 @@ onUnmounted(() => {
   }
 });
 </script>
-
-<template>
-  <div class="videoWrapper">
-    <video v-if="localSrc" ref="videoRef" :key="localSrc">
-      <source :src="localSrc" type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
-    <div v-else class="videoUpload">
-      <label for="video-upload" class="videoInput clickable">
-        Choose a video file
-        <input
-          type="file"
-          id="video-upload"
-          name="video-upload"
-          accept="video/mp4,video/webm,video/ogg,image/gif"
-          @change="onFileChange"
-          style="display: none"
-        />
-      </label>
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .videoWrapper {

@@ -19,7 +19,7 @@ export const renderer = {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext('2d')!;
-      const stream = canvas.captureStream(30); // 30fps
+      const stream = canvas.captureStream(24); // 24fps
       const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
       const chunks: Blob[] = [];
 

@@ -1,3 +1,61 @@
+<template>
+  <div class="timeline-editor">
+    <template v-for="(cut, index) in cuts.concat([videoLength])" :key="index">
+      <div
+        v-if="videoLength != 0"
+        class="timeline-video"
+        :class="{
+          selected: selectedPart === cut,
+          deleted: removedParts.some((part) => part[1] == cut),
+        }"
+        :style="{
+          position: 'absolute',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          left: (((index === 0 ? 0 : cuts[index - 1]) + 0.01) / videoLength) * 100 + '%',
+          width: ((cut - (index === 0 ? 0 : cuts[index - 1]) - 0.02) / videoLength) * 100 + '%',
+        }"
+        @click="selectPart(cut)"
+      ></div>
+      <div>
+        <div
+          v-if="videoLength != 0 && index < cuts.length"
+          class="cut-indicator"
+          :class="{ hovered: hoveredCut === cut }"
+          @mouseover="hoveredCut = cut"
+          @mouseleave="clearHoveredCut()"
+          :style="{
+            position: 'absolute',
+            left: (cut / videoLength) * 100 + '%',
+            transform: 'translateX(-50%)',
+            width: '10px',
+            height: '100%',
+            zIndex: 10,
+          }"
+          @click="removeCut(cut)"
+        ></div>
+      </div>
+    </template>
+    <div
+      class="progress-indicator"
+      :style="{ left: (currentTime / videoLength) * 100 + '%' }"
+    ></div>
+  </div>
+  <div class="buttons">
+    <div class="editing-buttons">
+      <button @click="addCut()" title="Create cut">✂️</button>
+      <button @click="removePart()" title="Remove part">🗑️</button>
+      <button @click="returnRemovedPart()" title="Return removed part">↩️</button>
+    </div>
+    <div class="management-buttons">
+      <button @click="ejectVideo" title="Remove video from timeline">⏏️</button>
+      <button @click="exportVideo" title="Export project" :class="{ loading: exporting }">
+        💾
+      </button>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { ref, defineProps, defineEmits } from 'vue';
 
@@ -94,64 +152,6 @@ function exportVideo() {
   emit('exportVideo');
 }
 </script>
-
-<template>
-  <div class="timeline-editor">
-    <template v-for="(cut, index) in cuts.concat([videoLength])" :key="index">
-      <div
-        v-if="videoLength != 0"
-        class="timeline-video"
-        :class="{
-          selected: selectedPart === cut,
-          deleted: removedParts.some((part) => part[1] == cut),
-        }"
-        :style="{
-          position: 'absolute',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          left: (((index === 0 ? 0 : cuts[index - 1]) + 0.01) / videoLength) * 100 + '%',
-          width: ((cut - (index === 0 ? 0 : cuts[index - 1]) - 0.02) / videoLength) * 100 + '%',
-        }"
-        @click="selectPart(cut)"
-      ></div>
-      <div>
-        <div
-          v-if="videoLength != 0 && index < cuts.length"
-          class="cut-indicator"
-          :class="{ hovered: hoveredCut === cut }"
-          @mouseover="hoveredCut = cut"
-          @mouseleave="clearHoveredCut()"
-          :style="{
-            position: 'absolute',
-            left: (cut / videoLength) * 100 + '%',
-            transform: 'translateX(-50%)',
-            width: '10px',
-            height: '100%',
-            zIndex: 10,
-          }"
-          @click="removeCut(cut)"
-        ></div>
-      </div>
-    </template>
-    <div
-      class="progress-indicator"
-      :style="{ left: (currentTime / videoLength) * 100 + '%' }"
-    ></div>
-  </div>
-  <div class="buttons">
-    <div class="editing-buttons">
-      <button @click="addCut()" title="Create cut">✂️</button>
-      <button @click="removePart()" title="Remove part">🗑️</button>
-      <button @click="returnRemovedPart()" title="Return removed part">↩️</button>
-    </div>
-    <div class="management-buttons">
-      <button @click="ejectVideo" title="Remove video from timeline">⏏️</button>
-      <button @click="exportVideo" title="Export project" :class="{ loading: exporting }">
-        💾
-      </button>
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .timeline-editor {

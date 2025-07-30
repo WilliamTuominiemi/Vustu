@@ -1,3 +1,36 @@
+<template>
+  <main>
+    <VideoPreview
+      ref="videoPreviewRef"
+      v-model:src="videoSrc"
+      @timeupdate="updateCurrentTime"
+      @loadedmetadata="updateVideoLength"
+      @ratechange="handleRateChange"
+    />
+
+    <div class="interface">
+      <VideoControls
+        :videoLength="videoLength"
+        :playbackRate="playbackRate"
+        :sliderTime="sliderTime"
+        @play="playVideo"
+        @pause="pauseVideo"
+        @update-playback-rate="updatePlaybackRate"
+        @go-to="goTo"
+      />
+
+      <TimelineEditor
+        :currentTime="currentTime"
+        :videoLength="videoLength"
+        :exporting="exporting"
+        @changeVideo="changeVideo"
+        @exportVideo="exportVideo"
+        v-model:removedParts="removedParts"
+      />
+    </div>
+  </main>
+</template>
+
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import TimelineEditor from '@/components/Editor/TimelineEditor.vue';
@@ -93,39 +126,6 @@ function exportVideo() {
   }
 }
 </script>
-
-<template>
-  <main>
-    <VideoPreview
-      ref="videoPreviewRef"
-      v-model:src="videoSrc"
-      @timeupdate="updateCurrentTime"
-      @loadedmetadata="updateVideoLength"
-      @ratechange="handleRateChange"
-    />
-
-    <div class="interface">
-      <VideoControls
-        :videoLength="videoLength"
-        :playbackRate="playbackRate"
-        :sliderTime="sliderTime"
-        @play="playVideo"
-        @pause="pauseVideo"
-        @update-playback-rate="updatePlaybackRate"
-        @go-to="goTo"
-      />
-
-      <TimelineEditor
-        :currentTime="currentTime"
-        :videoLength="videoLength"
-        :exporting="exporting"
-        @changeVideo="changeVideo"
-        @exportVideo="exportVideo"
-        v-model:removedParts="removedParts"
-      />
-    </div>
-  </main>
-</template>
 
 <style scoped>
 .interface {
