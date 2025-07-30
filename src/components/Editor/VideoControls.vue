@@ -18,8 +18,11 @@
           />⏲️
         </div>
       </div>
-      <div v-if="props.videoLength != 0" class="time-display">
-        <span>{{ localSliderTime }} / {{ props.videoLength.toFixed(1) }}</span>
+      <div v-if="props.videoLength != 0 && localPlaybackRate > 0" class="time-display">
+        <span
+          >{{ roundToTwoDecimalPlaces(localSliderTime / localPlaybackRate) }} /
+          {{ roundToTwoDecimalPlaces(props.videoLength / localPlaybackRate) }}</span
+        >
       </div>
     </div>
     <input
@@ -57,6 +60,10 @@ watch(playbackRate, (newValue) => {
 watch(sliderTime, (newValue) => {
   localSliderTime.value = newValue;
 });
+
+function roundToTwoDecimalPlaces(value: number): number {
+  return Math.round(value * 10) / 10;
+}
 </script>
 
 <style>
