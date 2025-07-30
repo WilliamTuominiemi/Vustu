@@ -14,6 +14,10 @@ const props = defineProps({
     type: Array as () => [number, number][],
     default: () => [],
   },
+  exporting: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['update:removedParts', 'changeVideo', 'exportVideo']);
@@ -142,7 +146,9 @@ function exportVideo() {
     </div>
     <div class="management-buttons">
       <button @click="ejectVideo" title="Remove video from timeline">⏏️</button>
-      <button @click="exportVideo" title="Export project">💾</button>
+      <button @click="exportVideo" title="Export project" :class="{ loading: exporting }">
+        💾
+      </button>
     </div>
   </div>
 </template>

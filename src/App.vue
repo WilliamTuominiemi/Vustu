@@ -15,6 +15,8 @@ const videoLength = ref(0);
 const playbackRate = ref(1);
 const removedParts = ref<[number, number][]>([]);
 
+const exporting = ref(false);
+
 function getVideoEl() {
   return videoPreviewRef.value?.videoRef ?? null;
 }
@@ -79,12 +81,14 @@ function changeVideo() {
 
 function exportVideo() {
   if (videoSrc.value) {
+    exporting.value = true;
     Renderer.exportProject(videoSrc.value, removedParts.value, playbackRate.value)
       .then(() => {
-        console.log('Video exported successfully!');
+        exporting.value = false;
       })
       .catch((error) => {
-        console.error('Error exporting video:', error);
+        exporting.value = false;
+        throw new Error(`Export failed: ${error.message}`);
       });
   }
 }
@@ -114,6 +118,7 @@ function exportVideo() {
       <TimelineEditor
         :currentTime="currentTime"
         :videoLength="videoLength"
+        :exporting="exporting"
         @changeVideo="changeVideo"
         @exportVideo="exportVideo"
         v-model:removedParts="removedParts"
