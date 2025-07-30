@@ -32,6 +32,7 @@
             height: '100%',
             zIndex: 10,
           }"
+          title="Remove cut"
           @click="removeCut(cut)"
         ></div>
       </div>
