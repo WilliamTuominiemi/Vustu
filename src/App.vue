@@ -3,6 +3,7 @@ import { ref, watch } from 'vue';
 import TimelineEditor from '@/components/Editor/TimelineEditor.vue';
 import VideoControls from '@/components/Editor/VideoControls.vue';
 import VideoPreview from '@/components/Editor/VideoPreview.vue';
+import { renderer as Renderer } from '@/utils/Renderer';
 
 const videoPreviewRef = ref<{ videoRef: HTMLVideoElement | null } | null>(null);
 
@@ -75,6 +76,18 @@ function changeVideo() {
     updateVideoLength(0);
   }
 }
+
+function exportVideo() {
+  if (videoSrc.value) {
+    Renderer.exportProject(videoSrc.value, removedParts.value, playbackRate.value)
+      .then(() => {
+        console.log('Video exported successfully!');
+      })
+      .catch((error) => {
+        console.error('Error exporting video:', error);
+      });
+  }
+}
 </script>
 
 <template>
@@ -102,6 +115,7 @@ function changeVideo() {
         :currentTime="currentTime"
         :videoLength="videoLength"
         @changeVideo="changeVideo"
+        @exportVideo="exportVideo"
         v-model:removedParts="removedParts"
       />
     </div>

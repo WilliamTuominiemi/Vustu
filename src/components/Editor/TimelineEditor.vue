@@ -16,7 +16,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update:removedParts', 'changeVideo']);
+const emit = defineEmits(['update:removedParts', 'changeVideo', 'exportVideo']);
 
 const cuts = ref<number[]>([]);
 const selectedPart = ref<number | null>(null);
@@ -85,6 +85,10 @@ function ejectVideo() {
   clearSelectedPart();
   cuts.value = [];
 }
+
+function exportVideo() {
+  emit('exportVideo');
+}
 </script>
 
 <template>
@@ -138,6 +142,7 @@ function ejectVideo() {
     </div>
     <div class="management-buttons">
       <button @click="ejectVideo" title="Remove video from timeline">⏏️</button>
+      <button @click="exportVideo" title="Export project">💾</button>
     </div>
   </div>
 </template>
