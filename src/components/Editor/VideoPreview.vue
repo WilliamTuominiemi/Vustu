@@ -5,6 +5,7 @@
       Your browser does not support the video tag.
     </video>
     <div v-else class="videoUpload">
+      <img src="/logo.png" alt="logo" width="75" height="75" />
       <label for="video-upload" class="videoInput clickable">
         Choose a video file
         <input
