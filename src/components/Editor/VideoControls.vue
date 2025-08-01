@@ -2,11 +2,16 @@
   <div class="controls">
     <div class="playback-controls">
       <div class="playback-buttons">
-        <button class="clickable" @click="$emit('play')" title="Play">▶️</button>
-        <button class="clickable" @click="$emit('pause')" title="Pause">⏸️</button>
+        <button class="clickable" @click="$emit('play')" title="Play" data-testid="play-button">
+          ▶️
+        </button>
+        <button class="clickable" @click="$emit('pause')" title="Pause" data-testid="pause-button">
+          ⏸️
+        </button>
         <div style="height: 100%">
           <input
             id="playback-rate"
+            data-testid="playback-rate"
             title="Playback rate"
             type="number"
             min="0.25"
@@ -18,7 +23,11 @@
           />⏲️
         </div>
       </div>
-      <div v-if="props.videoLength != 0 && localPlaybackRate > 0" class="time-display">
+      <div
+        v-if="props.videoLength != 0 && localPlaybackRate > 0"
+        class="time-display"
+        data-testid="time-display"
+      >
         <span
           >{{ roundToTwoDecimalPlaces(localSliderTime / localPlaybackRate) }} /
           {{ roundToTwoDecimalPlaces(props.videoLength / localPlaybackRate) }}</span
@@ -26,6 +35,7 @@
       </div>
     </div>
     <input
+      data-testid="time-slider"
       type="range"
       min="0"
       step="0.1"
