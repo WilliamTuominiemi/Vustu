@@ -96,7 +96,7 @@ describe('VideoControls', () => {
     const timeSlider = getByTestId('time-slider');
 
     fireEvent.update(timeSlider, '8.0');
-    expect(timeSlider.value).toBe('8.0');
+    expect((timeSlider as HTMLInputElement).value).toBe('8.0');
 
     expect(emitted()).toHaveProperty('go-to');
     expect(emitted()['go-to'][0]).toEqual(['8.0']);
