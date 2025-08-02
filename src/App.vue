@@ -33,9 +33,9 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import TimelineEditor from '@/components/Editor/TimelineEditor.vue';
-import VideoControls from '@/components/Editor/VideoControls.vue';
-import VideoPreview from '@/components/Editor/VideoPreview.vue';
+import TimelineEditor from '@/components/editor/TimelineEditor.vue';
+import VideoControls from '@/components/editor/VideoControls.vue';
+import VideoPreview from '@/components/editor/VideoPreview.vue';
 import { renderer as Renderer } from '@/utils/Renderer';
 
 const videoPreviewRef = ref<{ videoRef: HTMLVideoElement | null } | null>(null);

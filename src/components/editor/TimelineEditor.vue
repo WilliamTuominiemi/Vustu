@@ -4,6 +4,7 @@
       <div
         v-if="videoLength != 0"
         class="timeline-video"
+        data-testid="video-part"
         :class="{
           selected: selectedPart === cut,
           deleted: removedParts.some((part) => part[1] == cut),
@@ -21,6 +22,7 @@
         <div
           v-if="videoLength != 0 && index < cuts.length"
           class="cut-indicator"
+          data-testid="cut"
           :class="{ hovered: hoveredCut === cut }"
           @mouseover="hoveredCut = cut"
           @mouseleave="clearHoveredCut()"
@@ -44,13 +46,22 @@
   </div>
   <div class="buttons">
     <div class="editing-buttons">
-      <button @click="addCut()" title="Create cut">✂️</button>
-      <button @click="removePart()" title="Remove part">🗑️</button>
-      <button @click="returnRemovedPart()" title="Return removed part">↩️</button>
+      <button @click="addCut()" title="Create cut" data-testid="cut-button">✂️</button>
+      <button @click="removePart()" title="Remove part" data-testid="remove-button">🗑️</button>
+      <button @click="returnRemovedPart()" title="Return removed part" data-testid="return-button">
+        ↩️
+      </button>
     </div>
     <div class="management-buttons">
-      <button @click="ejectVideo" title="Remove video from timeline">⏏️</button>
-      <button @click="exportVideo" title="Export project" :class="{ loading: exporting }">
+      <button @click="ejectVideo" title="Remove video from timeline" data-testid="eject-button">
+        ⏏️
+      </button>
+      <button
+        @click="exportVideo"
+        title="Export project"
+        data-testid="export-button"
+        :class="{ loading: exporting }"
+      >
         💾
       </button>
     </div>
@@ -58,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref } from 'vue';
 
 const props = defineProps({
   currentTime: {
