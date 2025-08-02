@@ -1,6 +1,6 @@
 <template>
   <div class="videoWrapper">
-    <video v-if="localSrc" ref="videoRef" :key="localSrc">
+    <video v-if="localSrc" ref="videoRef" :key="localSrc" data-testid="video">
       <source :src="localSrc" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
@@ -11,6 +11,7 @@
         <input
           type="file"
           id="video-upload"
+          data-testid="video-upload"
           name="video-upload"
           accept="video/mp4,video/webm,video/ogg,image/gif"
           @change="onFileChange"
@@ -22,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, defineProps, defineEmits, watch } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 
 const props = defineProps<{
   src: string;
