@@ -9,7 +9,11 @@ afterEach(() => {
 
 describe('VideoPreview', () => {
   it('Should render upload field if src is not provided', () => {
-    const { getByTestId } = render(VideoPreview);
+    const { getByTestId } = render(VideoPreview, {
+      props: {
+        src: '',
+      },
+    });
 
     const videoUpload = getByTestId('video-upload');
     expect(videoUpload).toBeDefined();
