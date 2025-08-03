@@ -26,6 +26,7 @@
         @changeVideo="changeVideo"
         @exportVideo="exportVideo"
         v-model:removedParts="removedParts"
+        v-model:parts="parts"
       />
     </div>
   </main>
@@ -47,6 +48,7 @@ const sliderTime = ref(0);
 const videoLength = ref(0);
 const playbackRate = ref(1);
 const removedParts = ref<[number, number][]>([]);
+const parts = ref<[number, number][]>([]);
 
 const exporting = ref(false);
 
@@ -88,6 +90,7 @@ function updateCurrentTime(time: number) {
 
 function updateVideoLength(length: number) {
   videoLength.value = length;
+  parts.value = [[0, videoLength.value]];
 }
 
 function updatePlaybackRate(rate: number) {

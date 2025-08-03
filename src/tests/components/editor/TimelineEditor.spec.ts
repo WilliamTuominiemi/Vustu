@@ -39,10 +39,11 @@ describe('TimelineEditor', () => {
   });
 
   it('Should add cuts to video timeline', async () => {
-    const { getByTestId, getAllByTestId } = render(TimelineEditor, {
+    const { getByTestId, emitted } = render(TimelineEditor, {
       props: {
         currentTime: 5.0,
         videoLength: 10.0,
+        parts: [[0, 10.0]],
       },
     });
 
@@ -50,13 +51,13 @@ describe('TimelineEditor', () => {
 
     await cutButton.click();
 
-    const cuts = getAllByTestId('cut');
-
-    expect(cuts.length).toBe(1);
-
-    const videoParts = getAllByTestId('video-part');
-
-    expect(videoParts.length).toBe(2);
+    expect(emitted()).toHaveProperty('update:parts');
+    expect(emitted()['update:parts'][0]).toEqual([
+      [
+        [0, 5],
+        [5, 10],
+      ],
+    ]);
   });
 
   it('Should show cuts only on hover', async () => {
@@ -64,6 +65,10 @@ describe('TimelineEditor', () => {
       props: {
         currentTime: 5.0,
         videoLength: 10.0,
+        parts: [
+          [0, 5],
+          [5, 10],
+        ],
       },
     });
 
@@ -82,31 +87,30 @@ describe('TimelineEditor', () => {
   });
 
   it('Should remove cuts when cut is clicked', async () => {
-    const { getByTestId, queryAllByTestId, getAllByTestId } = render(TimelineEditor, {
+    const { getByTestId, emitted } = render(TimelineEditor, {
       props: {
         currentTime: 5.0,
         videoLength: 10.0,
+        parts: [
+          [0, 5],
+          [5, 10],
+        ],
       },
     });
-
-    const cutButton = getByTestId('cut-button');
-    await cutButton.click();
 
     const cut = getByTestId('cut');
     await cut.click();
 
-    const cuts = queryAllByTestId('cut');
-    expect(cuts.length).toBe(0);
-
-    const videoParts = getAllByTestId('video-part');
-    expect(videoParts.length).toBe(1);
+    expect(emitted()).toHaveProperty('update:parts');
+    expect(emitted()['update:parts'][0]).toEqual([[[0, 10]]]);
   });
 
   it('Should not allow two cuts at the same timestamp', async () => {
-    const { getByTestId, getAllByTestId } = render(TimelineEditor, {
+    const { getByTestId, emitted } = render(TimelineEditor, {
       props: {
         currentTime: 5.0,
         videoLength: 10.0,
+        parts: [[0, 10.0]],
       },
     });
 
@@ -115,24 +119,20 @@ describe('TimelineEditor', () => {
     await cutButton.click();
     await cutButton.click();
 
-    const cuts = getAllByTestId('cut');
-    expect(cuts.length).toBe(1);
-
-    const videoParts = getAllByTestId('video-part');
-    expect(videoParts.length).toBe(2);
+    expect(emitted()['update:parts'].length).toBe(1);
   });
 
   it('Should be able to select and deselect parts', async () => {
-    const { getByTestId, getAllByTestId } = render(TimelineEditor, {
+    const { getAllByTestId } = render(TimelineEditor, {
       props: {
         currentTime: 5.0,
         videoLength: 10.0,
+        parts: [
+          [0, 5],
+          [5, 10],
+        ],
       },
     });
-
-    const cutButton = getByTestId('cut-button');
-
-    await cutButton.click();
 
     const videoParts = getAllByTestId('video-part');
 
@@ -149,14 +149,12 @@ describe('TimelineEditor', () => {
     const props = {
       currentTime: 5.0,
       videoLength: 10.0,
+      parts: [[0, 5] as [number, number], [5, 10] as [number, number]],
     };
 
     const { getByTestId, getAllByTestId, emitted } = render(TimelineEditor, {
       props,
     });
-
-    const cutButton = getByTestId('cut-button');
-    await cutButton.click();
 
     const videoParts = getAllByTestId('video-part');
     await videoParts[1].click();
@@ -166,9 +164,45 @@ describe('TimelineEditor', () => {
 
     expect(emitted()).toHaveProperty('update:removedParts');
     expect(emitted()['update:removedParts'][0]).toEqual([[[5, 10]]]);
+  });
+
+  it('Should show which parts are removed', () => {
+    const props = {
+      currentTime: 5.0,
+      videoLength: 10.0,
+      parts: [[0, 5] as [number, number], [5, 10] as [number, number]],
+      removedParts: [[5, 10] as [number, number]],
+    };
+
+    const { getAllByTestId } = render(TimelineEditor, {
+      props,
+    });
+
+    const videoParts = getAllByTestId('video-part');
+
+    expect(videoParts[1].className.includes('deleted')).toBe(true);
+    expect(videoParts[0].className.includes('deleted')).toBe(false);
+  });
+
+  it('Should be able to return parts', async () => {
+    const props = {
+      currentTime: 5.0,
+      videoLength: 10.0,
+      parts: [[0, 5] as [number, number], [5, 10] as [number, number]],
+      removedParts: [[5, 10] as [number, number]],
+    };
+
+    const { getByTestId, getAllByTestId, emitted } = render(TimelineEditor, {
+      props,
+    });
+
+    const videoParts = getAllByTestId('video-part');
+    await videoParts[1].click();
 
     const returnButton = getByTestId('return-button');
-    await videoParts[1].click();
-    returnButton.click();
+    await returnButton.click();
+
+    expect(emitted()).toHaveProperty('update:removedParts');
+    expect(emitted()['update:removedParts'][0]).toEqual([[]]);
   });
 });

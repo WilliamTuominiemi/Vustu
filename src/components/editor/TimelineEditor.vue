@@ -1,41 +1,43 @@
 <template>
   <div class="timeline-editor">
-    <template v-for="(cut, index) in cuts.concat([videoLength])" :key="index">
+    <template v-for="(part, index) in parts" :key="index">
       <div
         v-if="videoLength != 0"
         class="timeline-video"
         data-testid="video-part"
         :class="{
-          selected: selectedPart === cut,
-          deleted: removedParts.some((part) => part[1] == cut),
+          selected: selectedPart === part,
+          deleted: removedParts.find((deleted) => deleted[0] === part[0] && deleted[1] === part[1]),
         }"
         :style="{
           position: 'absolute',
           top: '50%',
           transform: 'translateY(-50%)',
-          left: (((index === 0 ? 0 : cuts[index - 1]) + 0.01) / videoLength) * 100 + '%',
-          width: ((cut - (index === 0 ? 0 : cuts[index - 1]) - 0.02) / videoLength) * 100 + '%',
+          left: (part[0] / videoLength) * 100 + '%',
+          right: 100 - (part[1] / videoLength) * 100 + '%',
+          marginRight: '1px',
+          marginLeft: '5px',
         }"
-        @click="selectPart(cut)"
+        @click="selectPart(part)"
       ></div>
       <div>
         <div
-          v-if="videoLength != 0 && index < cuts.length"
+          v-if="videoLength != 0 && part[0] != 0"
           class="cut-indicator"
           data-testid="cut"
-          :class="{ hovered: hoveredCut === cut }"
-          @mouseover="hoveredCut = cut"
+          :class="{ hovered: hoveredCut === part[0] }"
+          @mouseover="hoveredCut = part[0]"
           @mouseleave="clearHoveredCut()"
           :style="{
             position: 'absolute',
-            left: (cut / videoLength) * 100 + '%',
+            left: (part[0] / videoLength) * 100 + '%',
             transform: 'translateX(-50%)',
             width: '10px',
             height: '100%',
             zIndex: 10,
           }"
           title="Remove cut"
-          @click="removeCut(cut)"
+          @click="removeCut(part[0])"
         ></div>
       </div>
     </template>
@@ -46,7 +48,7 @@
   </div>
   <div class="buttons">
     <div class="editing-buttons">
-      <button @click="addCut()" title="Create cut" data-testid="cut-button">✂️</button>
+      <button @click="addCut" title="Create cut" data-testid="cut-button">✂️</button>
       <button @click="removePart()" title="Remove part" data-testid="remove-button">🗑️</button>
       <button @click="returnRemovedPart()" title="Return removed part" data-testid="return-button">
         ↩️
@@ -80,6 +82,10 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  parts: {
+    type: Array as () => [number, number][],
+    default: () => [],
+  },
   removedParts: {
     type: Array as () => [number, number][],
     default: () => [],
@@ -90,34 +96,58 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update:removedParts', 'changeVideo', 'exportVideo']);
+const emit = defineEmits(['update:removedParts', 'changeVideo', 'exportVideo', 'update:parts']);
 
 const cuts = ref<number[]>([]);
-const selectedPart = ref<number | null>(null);
+const selectedPart = ref<[number, number] | [null, null]>([null, null]);
 const hoveredCut = ref<number | null>(null);
 
 function addCut() {
-  if (cuts.value.includes(props.currentTime)) {
+  if (
+    cuts.value.includes(props.currentTime) ||
+    props.removedParts.some(
+      (removedPart) => props.currentTime > removedPart[0] && props.currentTime < removedPart[1],
+    )
+  ) {
     return;
   }
   cuts.value.push(props.currentTime);
   cuts.value.sort((a, b) => a - b);
+
+  recalculateParts();
 }
 
-function selectPart(cut: number) {
-  if (selectedPart.value === cut) {
+function recalculateParts() {
+  const computedCuts = [0, ...cuts.value, props.videoLength];
+
+  const updatedParts = [];
+  for (let i = 0; i < computedCuts.length - 1; i++) {
+    updatedParts.push([computedCuts[i], computedCuts[i + 1]]);
+  }
+
+  emit('update:parts', updatedParts);
+}
+
+function selectPart(part: [number, number]) {
+  if (selectedPart.value === part) {
     clearSelectedPart();
     return;
   }
-  selectedPart.value = cut;
+  selectedPart.value = part;
 }
 
 function removeCut(cut: number) {
+  if (props.removedParts.some((removedPart) => cut == removedPart[0] || cut == removedPart[1])) {
+    return;
+  }
+
   cuts.value = cuts.value.filter((c) => c !== cut);
+
+  recalculateParts();
 }
 
 function clearSelectedPart() {
-  selectedPart.value = null;
+  selectedPart.value = [null, null];
 }
 
 function clearHoveredCut() {
@@ -126,31 +156,20 @@ function clearHoveredCut() {
 
 function removePart() {
   if (selectedPart.value == null) return;
-  const endPart = selectedPart.value || props.videoLength;
-  const startPart =
-    endPart === props.videoLength
-      ? cuts.value[cuts.value.length - 1]
-      : cuts.value.find((cut) => cut < endPart) || 0;
-  const updatedRemovedParts = [...props.removedParts, [startPart, endPart]];
+  const updatedRemovedParts = [...props.removedParts, selectedPart.value];
   emit('update:removedParts', updatedRemovedParts);
   clearSelectedPart();
 }
 
 function returnRemovedPart() {
-  if (selectedPart.value == null) return;
-  const endPart = selectedPart.value || props.videoLength;
-  const startPart =
-    endPart === props.videoLength
-      ? cuts.value[cuts.value.length - 1]
-      : cuts.value.find((cut) => cut < endPart) || 0;
-  const partIndex = props.removedParts.findIndex(
-    (part) => part[0] === startPart && part[1] === endPart,
-  );
-  if (partIndex !== -1) {
-    const updatedRemovedParts = [...props.removedParts];
-    updatedRemovedParts.splice(partIndex, 1);
-    emit('update:removedParts', updatedRemovedParts);
-  }
+  if (selectedPart.value[0] === null || selectedPart.value[1] === null) return;
+
+  const updatedRemovedParts = [...props.removedParts];
+  const index = updatedRemovedParts.indexOf(selectedPart.value as [number, number]);
+  updatedRemovedParts.splice(index, 1);
+
+  emit('update:removedParts', updatedRemovedParts);
+
   clearSelectedPart();
 }
 
@@ -181,6 +200,7 @@ function exportVideo() {
   top: 0;
   bottom: 0;
   width: 4px;
+  opacity: 0.7;
   background: #be5103;
   transition: left 0.1s linear;
   border-radius: 2px;
