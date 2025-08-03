@@ -205,4 +205,41 @@ describe('TimelineEditor', () => {
     expect(emitted()).toHaveProperty('update:removedParts');
     expect(emitted()['update:removedParts'][0]).toEqual([[]]);
   });
+
+  it('Should not allow cut on removed part', async () => {
+    const props = {
+      currentTime: 7.5,
+      videoLength: 10.0,
+      parts: [[0, 5] as [number, number], [5, 10] as [number, number]],
+      removedParts: [[5, 10] as [number, number]],
+    };
+
+    const { getByTestId, emitted } = render(TimelineEditor, {
+      props,
+    });
+
+    const cutButton = getByTestId('cut-button');
+
+    await cutButton.click();
+
+    expect(emitted()['update:parts']).not.toBeDefined();
+  });
+
+  it('Should not allow to remove cut on removed part', async () => {
+    const props = {
+      currentTime: 7.5,
+      videoLength: 10.0,
+      parts: [[0, 5] as [number, number], [5, 10] as [number, number]],
+      removedParts: [[5, 10] as [number, number]],
+    };
+
+    const { getByTestId, emitted } = render(TimelineEditor, {
+      props,
+    });
+
+    const cut = getByTestId('cut');
+    await cut.click();
+
+    expect(emitted()['update:parts']).not.toBeDefined();
+  });
 });

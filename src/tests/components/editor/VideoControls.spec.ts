@@ -101,4 +101,40 @@ describe('VideoControls', () => {
     expect(emitted()).toHaveProperty('go-to');
     expect(emitted()['go-to'][0]).toEqual(['8.0']);
   });
+
+  it('Should update local playback rate when prop changes', async () => {
+    const props = {
+      videoLength: 12.5,
+      playbackRate: 2.0,
+      sliderTime: 6.4,
+    };
+
+    const { getByTestId, rerender } = render(VideoControls, {
+      props,
+    });
+
+    const playbackRateInput = getByTestId('playback-rate');
+    expect((playbackRateInput as HTMLInputElement).value).toBe('2');
+
+    await rerender({ ...props, playbackRate: 3.5 });
+    expect((playbackRateInput as HTMLInputElement).value).toBe('3.5');
+  });
+
+  it('Should update local slider time when prop changes', async () => {
+    const props = {
+      videoLength: 12.5,
+      playbackRate: 2.0,
+      sliderTime: 6.4,
+    };
+
+    const { getByTestId, rerender } = render(VideoControls, {
+      props,
+    });
+
+    const timeSlider = getByTestId('time-slider');
+    expect((timeSlider as HTMLInputElement).value).toBe('6.4');
+
+    await rerender({ ...props, sliderTime: 9.2 });
+    expect((timeSlider as HTMLInputElement).value).toBe('9.2');
+  });
 });
