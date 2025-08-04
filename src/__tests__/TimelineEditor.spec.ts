@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/vue';
 
-import TimelineEditor from '@/components/editor/TimelineEditor.vue';
+import TimelineEditor from '@/components/TimelineEditor.vue';
 
 afterEach(() => {
   cleanup();

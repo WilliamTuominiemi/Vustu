@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/vue';
 
-import VideoPreview from '@/components/editor/VideoPreview.vue';
+import VideoPreview from '@/components/VideoPreview.vue';
 
 afterEach(() => {
   cleanup();

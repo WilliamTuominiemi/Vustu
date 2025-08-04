@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/vue';
 
-import VideoControls from '@/components/editor/VideoControls.vue';
+import VideoControls from '@/components/VideoControls.vue';
 
 afterEach(() => {
   cleanup();
