@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
+import type { Aspect } from '../utils/types';
 
 const props = defineProps<{
   src: string;
@@ -33,6 +34,7 @@ const emit = defineEmits<{
   (e: 'timeupdate', currentTime: number): void;
   (e: 'loadedmetadata', duration: number): void;
   (e: 'ratechange', playbackRate: number): void;
+  (e: 'aspectchange', aspect: Aspect): void;
   (e: 'update:src', src: string): void;
 }>();
 
@@ -51,11 +53,13 @@ watch(videoRef, (newVideo, oldVideo) => {
     oldVideo.removeEventListener('timeupdate', onTimeUpdate);
     oldVideo.removeEventListener('loadedmetadata', onLoadedMetadata);
     oldVideo.removeEventListener('ratechange', onRateChange);
+    oldVideo.removeEventListener('aspectchange', onAspectRatioChange);
   }
   if (newVideo) {
     newVideo.addEventListener('timeupdate', onTimeUpdate);
     newVideo.addEventListener('loadedmetadata', onLoadedMetadata);
     newVideo.addEventListener('ratechange', onRateChange);
+    newVideo.addEventListener('aspectchange', onAspectRatioChange);
   }
 });
 
@@ -64,9 +68,19 @@ function onTimeUpdate() {
 }
 function onLoadedMetadata() {
   if (videoRef.value) emit('loadedmetadata', videoRef.value.duration);
+  onAspectRatioChange();
 }
 function onRateChange() {
   if (videoRef.value) emit('ratechange', videoRef.value.playbackRate);
+}
+function onAspectRatioChange() {
+  if (videoRef.value) {
+    const aspect: Aspect = {
+      width: videoRef.value.videoWidth,
+      height: videoRef.value.videoHeight,
+    };
+    emit('aspectchange', aspect);
+  }
 }
 
 function onFileChange(event: Event) {
@@ -87,6 +101,7 @@ onUnmounted(() => {
     videoRef.value.removeEventListener('timeupdate', onTimeUpdate);
     videoRef.value.removeEventListener('loadedmetadata', onLoadedMetadata);
     videoRef.value.removeEventListener('ratechange', onRateChange);
+    videoRef.value.removeEventListener('aspectchange', onAspectRatioChange);
   }
 });
 </script>

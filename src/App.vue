@@ -6,6 +6,7 @@
       @timeupdate="updateCurrentTime"
       @loadedmetadata="updateVideoLength"
       @ratechange="handleRateChange"
+      @aspectchange="handleAspectChange"
     />
 
     <div class="interface">
@@ -13,6 +14,7 @@
         :videoLength="videoLength"
         :playbackRate="playbackRate"
         :sliderTime="sliderTime"
+        :aspect="aspectRatio"
         @play="playVideo"
         @pause="pauseVideo"
         @update-playback-rate="updatePlaybackRate"
@@ -38,6 +40,7 @@ import TimelineEditor from '@/components/TimelineEditor.vue';
 import VideoControls from '@/components/VideoControls.vue';
 import VideoPreview from '@/components/VideoPreview.vue';
 import { renderer as Renderer } from '@/utils/Renderer';
+import type { Aspect } from './utils/types';
 
 const videoPreviewRef = ref<{ videoRef: HTMLVideoElement | null } | null>(null);
 
@@ -49,6 +52,7 @@ const videoLength = ref(0);
 const playbackRate = ref(1);
 const removedParts = ref<[number, number][]>([]);
 const parts = ref<[number, number][]>([]);
+const aspectRatio = ref<Aspect>();
 
 const exporting = ref(false);
 
@@ -103,6 +107,10 @@ function updatePlaybackRate(rate: number) {
 
 function handleRateChange(rate: number) {
   playbackRate.value = rate;
+}
+
+function handleAspectChange(aspect: Aspect) {
+  aspectRatio.value = aspect;
 }
 
 function changeVideo() {

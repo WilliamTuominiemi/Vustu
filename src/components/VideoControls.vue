@@ -1,4 +1,8 @@
 <template>
+  {{ aspect?.width }}
+  |
+  {{ aspect?.height }}
+
   <div class="controls">
     <div class="playback-controls">
       <div class="playback-buttons">
@@ -49,11 +53,13 @@
 
 <script setup lang="ts">
 import { ref, watch, toRefs } from 'vue';
+import type { Aspect } from '../utils/types';
 
 const props = defineProps<{
   videoLength: number;
   playbackRate: number;
   sliderTime: number;
+  aspect: Aspect | undefined;
 }>();
 
 defineEmits(['play', 'pause', 'update-playback-rate', 'go-to']);
