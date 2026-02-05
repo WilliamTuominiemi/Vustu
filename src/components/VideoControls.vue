@@ -28,7 +28,8 @@
             min="10"
             max="4000"
             step="10"
-            v-model="localAspectWidth"
+            v-model="localDimensionWidth"
+            @input="updateVideoDimension"
             style="width: 90px; font-size: inherit; margin-right: 5px"
           />
           <input
@@ -36,7 +37,8 @@
             min="10"
             max="4000"
             step="10"
-            v-model="localAspectHeight"
+            v-model="localDimensionHeight"
+            @input="updateVideoDimension"
             style="width: 90px; font-size: inherit"
           />
           📺
@@ -68,24 +70,30 @@
 
 <script setup lang="ts">
 import { ref, watch, toRefs } from 'vue';
-import type { Aspect } from '../utils/types';
+import type { Dimension } from '../utils/types';
 
 const props = defineProps<{
   videoLength: number;
   playbackRate: number;
   sliderTime: number;
-  aspect: Aspect | undefined;
+  dimension: Dimension | undefined;
 }>();
 
-defineEmits(['play', 'pause', 'update-playback-rate', 'go-to']);
+const emit = defineEmits([
+  'play',
+  'pause',
+  'update-playback-rate',
+  'go-to',
+  'update-video-dimension',
+]);
 
-const { videoLength, playbackRate, sliderTime, aspect } = toRefs(props);
+const { videoLength, playbackRate, sliderTime, dimension } = toRefs(props);
 
 const localPlaybackRate = ref(playbackRate.value);
 const localSliderTime = ref(sliderTime.value);
 
-const localAspectWidth = ref(aspect.value?.width);
-const localAspectHeight = ref(aspect.value?.height);
+const localDimensionWidth = ref(dimension.value?.width);
+const localDimensionHeight = ref(dimension.value?.height);
 
 watch(playbackRate, (newValue) => {
   localPlaybackRate.value = newValue;
@@ -95,10 +103,19 @@ watch(sliderTime, (newValue) => {
   localSliderTime.value = newValue;
 });
 
-watch(aspect, (newValue) => {
-  localAspectWidth.value = newValue?.width;
-  localAspectHeight.value = newValue?.height;
+watch(dimension, (newValue) => {
+  localDimensionWidth.value = newValue?.width;
+  localDimensionHeight.value = newValue?.height;
 });
+
+function updateVideoDimension() {
+  const dimensions = {
+    width: localDimensionWidth.value,
+    height: localDimensionHeight.value,
+  };
+
+  emit('update-video-dimension', dimensions);
+}
 
 function roundToTwoDecimalPlaces(value: number): number {
   return Math.round(value * 10) / 10;

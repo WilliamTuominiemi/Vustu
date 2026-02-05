@@ -1,6 +1,18 @@
 <template>
   <div class="videoWrapper">
-    <video v-if="localSrc" ref="videoRef" :key="localSrc" data-testid="video">
+    <video
+      v-if="localSrc"
+      ref="videoRef"
+      :key="localSrc"
+      data-testid="video"
+      :style="{
+        width: localDimension?.width + 'px',
+        height: localDimension?.height + 'px',
+        maxWidth: '100%',
+        maxHeight: '100%',
+        objectFit: 'fill',
+      }"
+    >
       <source :src="localSrc" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
@@ -24,27 +36,35 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
-import type { Aspect } from '../utils/types';
+import type { Dimension } from '../utils/types';
 
 const props = defineProps<{
   src: string;
+  dimension: Dimension | undefined;
 }>();
 
 const emit = defineEmits<{
   (e: 'timeupdate', currentTime: number): void;
   (e: 'loadedmetadata', duration: number): void;
   (e: 'ratechange', playbackRate: number): void;
-  (e: 'aspectchange', aspect: Aspect): void;
+  (e: 'dimensionchange', dimension: Dimension): void;
   (e: 'update:src', src: string): void;
 }>();
 
 const videoRef = ref<HTMLVideoElement | null>(null);
 const localSrc = ref(props.src);
+const localDimension = ref(props.dimension);
 
 watch(
   () => props.src,
   (newSrc) => {
     localSrc.value = newSrc;
+  },
+);
+watch(
+  () => props.dimension,
+  (dimension) => {
+    localDimension.value = dimension;
   },
 );
 
@@ -53,13 +73,13 @@ watch(videoRef, (newVideo, oldVideo) => {
     oldVideo.removeEventListener('timeupdate', onTimeUpdate);
     oldVideo.removeEventListener('loadedmetadata', onLoadedMetadata);
     oldVideo.removeEventListener('ratechange', onRateChange);
-    oldVideo.removeEventListener('aspectchange', onAspectRatioChange);
+    oldVideo.removeEventListener('dimensionchange', onDimensionChange);
   }
   if (newVideo) {
     newVideo.addEventListener('timeupdate', onTimeUpdate);
     newVideo.addEventListener('loadedmetadata', onLoadedMetadata);
     newVideo.addEventListener('ratechange', onRateChange);
-    newVideo.addEventListener('aspectchange', onAspectRatioChange);
+    newVideo.addEventListener('dimensionchange', onDimensionChange);
   }
 });
 
@@ -68,18 +88,18 @@ function onTimeUpdate() {
 }
 function onLoadedMetadata() {
   if (videoRef.value) emit('loadedmetadata', videoRef.value.duration);
-  onAspectRatioChange();
+  onDimensionChange();
 }
 function onRateChange() {
   if (videoRef.value) emit('ratechange', videoRef.value.playbackRate);
 }
-function onAspectRatioChange() {
+function onDimensionChange() {
   if (videoRef.value) {
-    const aspect: Aspect = {
+    const dimension: Dimension = {
       width: videoRef.value.videoWidth,
       height: videoRef.value.videoHeight,
     };
-    emit('aspectchange', aspect);
+    emit('dimensionchange', dimension);
   }
 }
 
@@ -101,7 +121,7 @@ onUnmounted(() => {
     videoRef.value.removeEventListener('timeupdate', onTimeUpdate);
     videoRef.value.removeEventListener('loadedmetadata', onLoadedMetadata);
     videoRef.value.removeEventListener('ratechange', onRateChange);
-    videoRef.value.removeEventListener('aspectchange', onAspectRatioChange);
+    videoRef.value.removeEventListener('dimensionchange', onDimensionChange);
   }
 });
 </script>

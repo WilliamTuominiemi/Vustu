@@ -1,4 +1,4 @@
-export interface Aspect {
+export interface Dimension {
   width: number;
   height: number;
 }
