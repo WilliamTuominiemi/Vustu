@@ -1,8 +1,4 @@
 <template>
-  {{ aspect?.width }}
-  |
-  {{ aspect?.height }}
-
   <div class="controls">
     <div class="playback-controls">
       <div class="playback-buttons">
@@ -25,6 +21,25 @@
             @input="$emit('update-playback-rate', localPlaybackRate)"
             style="width: 90px; font-size: inherit"
           />⏲️
+        </div>
+        <div style="height: 100%">
+          <input
+            type="number"
+            min="10"
+            max="4000"
+            step="10"
+            v-model="localAspectWidth"
+            style="width: 90px; font-size: inherit; margin-right: 5px"
+          />
+          <input
+            type="number"
+            min="10"
+            max="4000"
+            step="10"
+            v-model="localAspectHeight"
+            style="width: 90px; font-size: inherit"
+          />
+          📺
         </div>
       </div>
       <div
@@ -64,10 +79,13 @@ const props = defineProps<{
 
 defineEmits(['play', 'pause', 'update-playback-rate', 'go-to']);
 
-const { videoLength, playbackRate, sliderTime } = toRefs(props);
+const { videoLength, playbackRate, sliderTime, aspect } = toRefs(props);
 
 const localPlaybackRate = ref(playbackRate.value);
 const localSliderTime = ref(sliderTime.value);
+
+const localAspectWidth = ref(aspect.value?.width);
+const localAspectHeight = ref(aspect.value?.height);
 
 watch(playbackRate, (newValue) => {
   localPlaybackRate.value = newValue;
@@ -75,6 +93,11 @@ watch(playbackRate, (newValue) => {
 
 watch(sliderTime, (newValue) => {
   localSliderTime.value = newValue;
+});
+
+watch(aspect, (newValue) => {
+  localAspectWidth.value = newValue?.width;
+  localAspectHeight.value = newValue?.height;
 });
 
 function roundToTwoDecimalPlaces(value: number): number {
