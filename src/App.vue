@@ -3,9 +3,11 @@
     <VideoPreview
       ref="videoPreviewRef"
       v-model:src="videoSrc"
+      :aspect="aspect"
       @timeupdate="updateCurrentTime"
       @loadedmetadata="updateVideoLength"
       @ratechange="handleRateChange"
+      @aspectchange="handleAspectRatioChange"
     />
 
     <div class="interface">
@@ -13,10 +15,12 @@
         :videoLength="videoLength"
         :playbackRate="playbackRate"
         :sliderTime="sliderTime"
+        :aspect="aspect"
         @play="playVideo"
         @pause="pauseVideo"
         @update-playback-rate="updatePlaybackRate"
         @go-to="goTo"
+        @update-aspect-ratio="handleAspectRatioChange"
       />
 
       <TimelineEditor
@@ -49,6 +53,7 @@ const videoLength = ref(0);
 const playbackRate = ref(1);
 const removedParts = ref<[number, number][]>([]);
 const parts = ref<[number, number][]>([]);
+const aspect = ref<number>(1);
 
 const exporting = ref(false);
 
@@ -105,6 +110,10 @@ function handleRateChange(rate: number) {
   playbackRate.value = rate;
 }
 
+function handleAspectRatioChange(newAspectRation: number) {
+  aspect.value = newAspectRation;
+}
+
 function changeVideo() {
   videoSrc.value = '';
   if (videoPreviewRef.value) {
@@ -118,7 +127,7 @@ function changeVideo() {
 function exportVideo() {
   if (videoSrc.value) {
     exporting.value = true;
-    Renderer.exportProject(videoSrc.value, removedParts.value, playbackRate.value)
+    Renderer.exportProject(videoSrc.value, removedParts.value, playbackRate.value, aspect.value)
       .then(() => {
         exporting.value = false;
       })

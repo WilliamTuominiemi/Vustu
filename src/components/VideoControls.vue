@@ -22,6 +22,19 @@
             style="width: 90px; font-size: inherit"
           />⏲️
         </div>
+        <div style="height: 100%">
+          <input
+            data-testid="aspect-ratio"
+            title="Aspect ratio"
+            type="number"
+            min="0.1"
+            max="3.0"
+            step="0.01"
+            v-model="localAspectRatio"
+            @input="updateAspectRatio"
+            style="width: 90px; font-size: inherit"
+          />📺
+        </div>
       </div>
       <div
         v-if="props.videoLength != 0 && localPlaybackRate > 0"
@@ -54,14 +67,17 @@ const props = defineProps<{
   videoLength: number;
   playbackRate: number;
   sliderTime: number;
+  aspect: number;
 }>();
 
-defineEmits(['play', 'pause', 'update-playback-rate', 'go-to']);
+const emit = defineEmits(['play', 'pause', 'update-playback-rate', 'go-to', 'update-aspect-ratio']);
 
-const { videoLength, playbackRate, sliderTime } = toRefs(props);
+const { videoLength, playbackRate, sliderTime, aspect } = toRefs(props);
 
 const localPlaybackRate = ref(playbackRate.value);
 const localSliderTime = ref(sliderTime.value);
+
+const localAspectRatio = ref(aspect.value);
 
 watch(playbackRate, (newValue) => {
   localPlaybackRate.value = newValue;
@@ -70,6 +86,14 @@ watch(playbackRate, (newValue) => {
 watch(sliderTime, (newValue) => {
   localSliderTime.value = newValue;
 });
+
+watch(aspect, (newValue) => {
+  localAspectRatio.value = newValue;
+});
+
+function updateAspectRatio() {
+  emit('update-aspect-ratio', localAspectRatio.value);
+}
 
 function roundToTwoDecimalPlaces(value: number): number {
   return Math.round(value * 10) / 10;

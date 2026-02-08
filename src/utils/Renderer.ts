@@ -3,6 +3,7 @@ export const renderer = {
     videoSrc: string,
     removedParts: [number, number][],
     videoSpeed: number,
+    aspectRatio: number,
     options = { fps: 24, qualityPreset: 'medium' },
   ) => {
     try {
@@ -29,8 +30,16 @@ export const renderer = {
 
       // Create canvas with appropriate dimensions
       const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+
+      // Sort out aspect ratio for final result
+      const originalAspect = video.videoWidth / video.videoHeight;
+      if (aspectRatio > originalAspect) {
+        canvas.width = video.videoHeight * aspectRatio;
+        canvas.height = video.videoHeight;
+      } else {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoWidth / aspectRatio;
+      }
       const ctx = canvas.getContext('2d', { alpha: false })!; // optimize context
 
       // Configure recorder with quality options
