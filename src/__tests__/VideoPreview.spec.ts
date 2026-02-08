@@ -12,6 +12,7 @@ describe('VideoPreview', () => {
     const { getByTestId } = render(VideoPreview, {
       props: {
         src: '',
+        aspect: 1.75,
       },
     });
 
@@ -23,6 +24,7 @@ describe('VideoPreview', () => {
     const { getByTestId } = render(VideoPreview, {
       props: {
         src: 'test',
+        aspect: 1.75,
       },
     });
 

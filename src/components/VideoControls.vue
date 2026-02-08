@@ -66,7 +66,7 @@ const props = defineProps<{
   videoLength: number;
   playbackRate: number;
   sliderTime: number;
-  aspect: number | undefined;
+  aspect: number;
 }>();
 
 const emit = defineEmits(['play', 'pause', 'update-playback-rate', 'go-to', 'update-aspect-ratio']);
@@ -76,7 +76,7 @@ const { videoLength, playbackRate, sliderTime, aspect } = toRefs(props);
 const localPlaybackRate = ref(playbackRate.value);
 const localSliderTime = ref(sliderTime.value);
 
-const localAspectRatio = ref(aspect?.value);
+const localAspectRatio = ref(aspect.value);
 
 watch(playbackRate, (newValue) => {
   localPlaybackRate.value = newValue;

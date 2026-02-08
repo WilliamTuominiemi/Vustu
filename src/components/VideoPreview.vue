@@ -27,7 +27,7 @@ import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 
 const props = defineProps<{
   src: string;
-  aspect: number | undefined;
+  aspect: number;
 }>();
 
 const emit = defineEmits<{

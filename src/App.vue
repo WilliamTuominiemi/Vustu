@@ -53,7 +53,7 @@ const videoLength = ref(0);
 const playbackRate = ref(1);
 const removedParts = ref<[number, number][]>([]);
 const parts = ref<[number, number][]>([]);
-const aspect = ref<number>();
+const aspect = ref<number>(1);
 
 const exporting = ref(false);
 

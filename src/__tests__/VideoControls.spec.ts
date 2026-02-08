@@ -13,6 +13,7 @@ describe('VideoControls', () => {
       videoLength: 12.5,
       playbackRate: 2.0,
       sliderTime: 6.4,
+      aspect: 1.75,
     };
 
     const { getByTestId } = render(VideoControls, {
@@ -31,6 +32,7 @@ describe('VideoControls', () => {
       videoLength: 12.5,
       playbackRate: 2.0,
       sliderTime: 6.4,
+      aspect: 1.75,
     };
 
     const { getByTestId, emitted } = render(VideoControls, {
@@ -49,6 +51,7 @@ describe('VideoControls', () => {
       videoLength: 12.5,
       playbackRate: 2.0,
       sliderTime: 6.4,
+      aspect: 1.75,
     };
 
     const { getByTestId, emitted } = render(VideoControls, {
@@ -67,6 +70,7 @@ describe('VideoControls', () => {
       videoLength: 12.5,
       playbackRate: 2.0,
       sliderTime: 6.4,
+      aspect: 1.75,
     };
 
     const { getByTestId, emitted } = render(VideoControls, {
@@ -87,6 +91,7 @@ describe('VideoControls', () => {
       videoLength: 12.5,
       playbackRate: 2.0,
       sliderTime: 6.4,
+      aspect: 1.75,
     };
 
     const { getByTestId, emitted } = render(VideoControls, {
@@ -107,6 +112,7 @@ describe('VideoControls', () => {
       videoLength: 12.5,
       playbackRate: 2.0,
       sliderTime: 6.4,
+      aspect: 1.75,
     };
 
     const { getByTestId, rerender } = render(VideoControls, {
@@ -125,6 +131,7 @@ describe('VideoControls', () => {
       videoLength: 12.5,
       playbackRate: 2.0,
       sliderTime: 6.4,
+      aspect: 1.75,
     };
 
     const { getByTestId, rerender } = render(VideoControls, {
