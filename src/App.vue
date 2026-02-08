@@ -127,7 +127,7 @@ function changeVideo() {
 function exportVideo() {
   if (videoSrc.value) {
     exporting.value = true;
-    Renderer.exportProject(videoSrc.value, removedParts.value, playbackRate.value)
+    Renderer.exportProject(videoSrc.value, removedParts.value, playbackRate.value, aspect.value)
       .then(() => {
         exporting.value = false;
       })
