@@ -24,6 +24,7 @@
         </div>
         <div style="height: 100%">
           <input
+            data-testid="aspect-ratio"
             title="Aspect ratio"
             type="number"
             min="0.1"

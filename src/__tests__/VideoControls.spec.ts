@@ -144,4 +144,44 @@ describe('VideoControls', () => {
     await rerender({ ...props, sliderTime: 9.2 });
     expect((timeSlider as HTMLInputElement).value).toBe('9.2');
   });
+
+  it('Should update local aspect ratio when prop changes', async () => {
+    const props = {
+      videoLength: 12.5,
+      playbackRate: 2.0,
+      sliderTime: 6.4,
+      aspect: 1.75,
+    };
+
+    const { getByTestId, rerender } = render(VideoControls, {
+      props,
+    });
+
+    const aspectRatio = getByTestId('aspect-ratio');
+    expect((aspectRatio as HTMLInputElement).value).toBe('1.75');
+
+    await rerender({ ...props, aspect: 0.5 });
+    expect((aspectRatio as HTMLInputElement).value).toBe('0.5');
+  });
+
+  it('Should update aspect ratio when input changes', async () => {
+    const props = {
+      videoLength: 12.5,
+      playbackRate: 2.0,
+      sliderTime: 6.4,
+      aspect: 1.75,
+    };
+
+    const { getByTestId, emitted } = render(VideoControls, {
+      props,
+    });
+
+    const aspectRatio = getByTestId('aspect-ratio');
+
+    fireEvent.update(aspectRatio, '2.0');
+    expect((aspectRatio as HTMLInputElement).value).toBe('2.0');
+
+    expect(emitted()).toHaveProperty('update-aspect-ratio');
+    expect(emitted()['update-aspect-ratio'][0]).toEqual([2]);
+  });
 });
