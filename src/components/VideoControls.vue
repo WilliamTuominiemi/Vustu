@@ -24,15 +24,15 @@
         </div>
         <div style="height: 100%">
           <input
+            title="Aspect ratio"
             type="number"
             min="0.1"
             max="3.0"
             step="0.01"
             v-model="localAspectRatio"
             @input="updateAspectRatio"
-            style="width: 90px; font-size: inherit; margin-right: 5px"
-          />
-          📺
+            style="width: 90px; font-size: inherit"
+          />📺
         </div>
       </div>
       <div

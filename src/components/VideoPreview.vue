@@ -152,6 +152,7 @@ const videoStyle = computed(() => {
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  background-color: #94988c;
 }
 
 video {
