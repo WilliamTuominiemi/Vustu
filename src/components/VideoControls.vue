@@ -25,21 +25,12 @@
         <div style="height: 100%">
           <input
             type="number"
-            min="10"
-            max="4000"
-            step="10"
-            v-model="localDimensionWidth"
-            @input="updateVideoDimension"
+            min="0.1"
+            max="3.0"
+            step="0.01"
+            v-model="localAspectRatio"
+            @input="updateAspectRatio"
             style="width: 90px; font-size: inherit; margin-right: 5px"
-          />
-          <input
-            type="number"
-            min="10"
-            max="4000"
-            step="10"
-            v-model="localDimensionHeight"
-            @input="updateVideoDimension"
-            style="width: 90px; font-size: inherit"
           />
           📺
         </div>
@@ -70,30 +61,22 @@
 
 <script setup lang="ts">
 import { ref, watch, toRefs } from 'vue';
-import type { Dimension } from '../utils/types';
 
 const props = defineProps<{
   videoLength: number;
   playbackRate: number;
   sliderTime: number;
-  dimension: Dimension | undefined;
+  aspect: number | undefined;
 }>();
 
-const emit = defineEmits([
-  'play',
-  'pause',
-  'update-playback-rate',
-  'go-to',
-  'update-video-dimension',
-]);
+const emit = defineEmits(['play', 'pause', 'update-playback-rate', 'go-to', 'update-aspect-ratio']);
 
-const { videoLength, playbackRate, sliderTime, dimension } = toRefs(props);
+const { videoLength, playbackRate, sliderTime, aspect } = toRefs(props);
 
 const localPlaybackRate = ref(playbackRate.value);
 const localSliderTime = ref(sliderTime.value);
 
-const localDimensionWidth = ref(dimension.value?.width);
-const localDimensionHeight = ref(dimension.value?.height);
+const localAspectRatio = ref(aspect?.value);
 
 watch(playbackRate, (newValue) => {
   localPlaybackRate.value = newValue;
@@ -103,18 +86,12 @@ watch(sliderTime, (newValue) => {
   localSliderTime.value = newValue;
 });
 
-watch(dimension, (newValue) => {
-  localDimensionWidth.value = newValue?.width;
-  localDimensionHeight.value = newValue?.height;
+watch(aspect, (newValue) => {
+  localAspectRatio.value = newValue;
 });
 
-function updateVideoDimension() {
-  const dimensions = {
-    width: localDimensionWidth.value,
-    height: localDimensionHeight.value,
-  };
-
-  emit('update-video-dimension', dimensions);
+function updateAspectRatio() {
+  emit('update-aspect-ratio', localAspectRatio.value);
 }
 
 function roundToTwoDecimalPlaces(value: number): number {
