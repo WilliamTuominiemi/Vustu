@@ -4,7 +4,7 @@ export const renderer = {
     removedParts: [number, number][],
     videoSpeed: number,
     aspectRatio: number,
-    options = { fps: 24, qualityPreset: 'medium' },
+    options = { fps: 24 },
   ) => {
     try {
       // Fetch and load video
@@ -43,14 +43,11 @@ export const renderer = {
       const ctx = canvas.getContext('2d', { alpha: false })!; // optimize context
 
       // Configure recorder with quality options
+      const pixelCount = video.videoWidth * video.videoHeight;
       const stream = canvas.captureStream(fps);
       const recorderOptions = {
         mimeType: 'video/webm',
-        videoBitsPerSecond: getVideoBitrate(
-          options.qualityPreset,
-          video.videoWidth,
-          video.videoHeight,
-        ),
+        videoBitsPerSecond: Math.min(2500000, pixelCount * 0.2),
       };
       const recorder = new MediaRecorder(stream, recorderOptions);
       const chunks: Blob[] = [];
@@ -136,18 +133,3 @@ export const renderer = {
     }
   },
 };
-
-// Helper function to determine appropriate bitrate based on resolution and quality preset
-function getVideoBitrate(preset = 'medium', width: number, height: number): number {
-  const pixelCount = width * height;
-
-  switch (preset) {
-    case 'low':
-      return Math.min(1000000, pixelCount * 0.1);
-    case 'high':
-      return Math.min(8000000, pixelCount * 0.4);
-    case 'medium':
-    default:
-      return Math.min(2500000, pixelCount * 0.2);
-  }
-}
