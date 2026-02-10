@@ -7,16 +7,7 @@ export const renderer = {
     options = { fps: 24 },
   ) => {
     try {
-      // Fetch and load video
-      const response = await fetch(videoSrc);
-      const videoBlob = await response.blob();
-      const video = document.createElement('video');
-
-      // Create a promise to ensure video metadata is loaded
-      video.src = URL.createObjectURL(videoBlob);
-      await new Promise((resolve) => {
-        video.onloadedmetadata = () => resolve(true);
-      });
+      const video = await loadVideo(videoSrc);
 
       const fps = options.fps;
       const duration = video.duration * 1000;
@@ -97,4 +88,19 @@ export const renderer = {
       throw error;
     }
   },
+};
+
+const loadVideo = async (videoSrc: string): Promise<HTMLVideoElement> => {
+  // Fetch and load video
+  const response = await fetch(videoSrc);
+  const videoBlob = await response.blob();
+  const video = document.createElement('video');
+
+  // Create a promise to ensure video metadata is loaded
+  video.src = URL.createObjectURL(videoBlob);
+  await new Promise((resolve) => {
+    video.onloadedmetadata = () => resolve(true);
+  });
+
+  return video;
 };
