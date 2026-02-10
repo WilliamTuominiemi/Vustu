@@ -17,25 +17,7 @@ export const renderer = {
 
       const { canvas, ctx } = createCanvas(video, aspectRatio);
 
-      // Configure recorder
-      const stream = canvas.captureStream(fps);
-      const recorder = new MediaRecorder(stream, {
-        mimeType: 'video/webm',
-        videoBitsPerSecond: Math.min(2500000, video.videoWidth * video.videoHeight * 0.2),
-      });
-      const chunks: Blob[] = [];
-
-      recorder.ondataavailable = (e) => chunks.push(e.data);
-      recorder.onstop = () => {
-        const outputBlob = new Blob(chunks, { type: 'video/webm' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(outputBlob);
-        link.download = 'edited-video.webm';
-        link.click();
-        URL.revokeObjectURL(link.href);
-        URL.revokeObjectURL(video.src);
-      };
-
+      const recorder = createRecorder(canvas, video, fps, (blob) => downloadVideo(blob, video.src));
       recorder.start();
 
       // Process video frames in batches
@@ -112,4 +94,32 @@ const createCanvas = (
   const ctx = canvas.getContext('2d', { alpha: false })!;
 
   return { canvas, ctx };
+};
+
+const createRecorder = (
+  canvas: HTMLCanvasElement,
+  video: HTMLVideoElement,
+  fps: number,
+  onComplete: (blob: Blob) => void,
+): MediaRecorder => {
+  const stream = canvas.captureStream(fps);
+  const recorder = new MediaRecorder(stream, {
+    mimeType: 'video/webm',
+    videoBitsPerSecond: Math.min(2500000, video.videoWidth * video.videoHeight * 0.2),
+  });
+  const chunks: Blob[] = [];
+
+  recorder.ondataavailable = (e) => chunks.push(e.data);
+  recorder.onstop = () => onComplete(new Blob(chunks, { type: 'video/webm' }));
+
+  return recorder;
+};
+
+const downloadVideo = (blob: Blob, videoSrc: string) => {
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'edited-video.webm';
+  link.click();
+  URL.revokeObjectURL(link.href);
+  URL.revokeObjectURL(videoSrc);
 };
