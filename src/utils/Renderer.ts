@@ -15,18 +15,7 @@ export const renderer = {
         .map(([start, end]) => [start * 1000, end * 1000] as [number, number])
         .sort((a, b) => a[0] - b[0]);
 
-      // Create canvas with correct dimensions and aspect ratio
-      const canvas = document.createElement('canvas');
-      const originalAspect = video.videoWidth / video.videoHeight;
-      if (aspectRatio > originalAspect) {
-        canvas.width = video.videoHeight * aspectRatio;
-        canvas.height = video.videoHeight;
-      } else {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoWidth / aspectRatio;
-      }
-
-      const ctx = canvas.getContext('2d', { alpha: false })!;
+      const { canvas, ctx } = createCanvas(video, aspectRatio);
 
       // Configure recorder
       const stream = canvas.captureStream(fps);
@@ -103,4 +92,24 @@ const loadVideo = async (videoSrc: string): Promise<HTMLVideoElement> => {
   });
 
   return video;
+};
+
+const createCanvas = (
+  video: HTMLVideoElement,
+  aspectRatio: number,
+): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D } => {
+  // Create canvas with correct dimensions and aspect ratio
+  const canvas = document.createElement('canvas');
+  const originalAspect = video.videoWidth / video.videoHeight;
+  if (aspectRatio > originalAspect) {
+    canvas.width = video.videoHeight * aspectRatio;
+    canvas.height = video.videoHeight;
+  } else {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoWidth / aspectRatio;
+  }
+
+  const ctx = canvas.getContext('2d', { alpha: false })!;
+
+  return { canvas, ctx };
 };
