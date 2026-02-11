@@ -35,13 +35,14 @@ const emit = defineEmits<{
   (e: 'loadedmetadata', duration: number): void;
   (e: 'ratechange', playbackRate: number): void;
   (e: 'aspectchange', aspectRatio: number): void;
-  (e: 'update:src', src: string): void;
+  (e: 'update:src', src: string, name: string): void;
 }>();
 
 const videoRef = ref<HTMLVideoElement | null>(null);
 const videoWrapper = ref<HTMLDivElement | null>(null);
 const localSrc = ref(props.src);
 const localAspectRatio = ref(props.aspect);
+const fileName = ref('');
 
 watch(
   () => props.src,
@@ -75,7 +76,7 @@ function onTimeUpdate() {
   if (videoRef.value) emit('timeupdate', videoRef.value.currentTime);
 }
 function onLoadedMetadata() {
-  if (videoRef.value) emit('loadedmetadata', videoRef.value.duration);
+  if (videoRef.value) emit('loadedmetadata', videoRef.value.duration, fileName.value);
   onDimensionChange();
 }
 function onRateChange() {
@@ -95,6 +96,7 @@ function onFileChange(event: Event) {
     const file = input.files[0];
     const url = URL.createObjectURL(file);
     localSrc.value = url;
+    fileName.value = file.name.replace(/\.[^/.]+$/, '');
     emit('update:src', url);
   }
 }

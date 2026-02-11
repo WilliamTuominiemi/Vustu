@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
   currentTime: {
@@ -99,6 +99,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  originalTitle: {
+    type: String,
+    default: '',
+  },
 });
 
 const emit = defineEmits(['update:removedParts', 'changeVideo', 'exportVideo', 'update:parts']);
@@ -109,6 +113,13 @@ const hoveredCut = ref<number | null>(null);
 
 const localVideoTitle = ref('');
 const localFileType = ref('webm');
+
+watch(
+  () => props.originalTitle,
+  (title) => {
+    localVideoTitle.value = title;
+  },
+);
 
 function addCut() {
   if (
