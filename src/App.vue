@@ -5,7 +5,7 @@
       v-model:src="videoSrc"
       :aspect="aspect"
       @timeupdate="updateCurrentTime"
-      @loadedmetadata="updateVideoLength"
+      @loadedmetadata="updateVideoMetadata"
       @ratechange="handleRateChange"
       @aspectchange="handleAspectRatioChange"
     />
@@ -27,6 +27,7 @@
         :currentTime="currentTime"
         :videoLength="videoLength"
         :exporting="exporting"
+        :originalTitle="fileName"
         @changeVideo="changeVideo"
         @exportVideo="exportVideo"
         v-model:removedParts="removedParts"
@@ -50,6 +51,7 @@ const videoSrc = ref('');
 const currentTime = ref(0);
 const sliderTime = ref(0);
 const videoLength = ref(0);
+const fileName = ref('');
 const playbackRate = ref(1);
 const removedParts = ref<[number, number][]>([]);
 const parts = ref<[number, number][]>([]);
@@ -93,9 +95,10 @@ function updateCurrentTime(time: number) {
   sliderTime.value = time;
 }
 
-function updateVideoLength(length: number) {
+function updateVideoMetadata(length: number, name: string) {
   videoLength.value = length;
   parts.value = [[0, videoLength.value]];
+  fileName.value = name;
 }
 
 function updatePlaybackRate(rate: number) {
@@ -120,14 +123,21 @@ function changeVideo() {
     videoPreviewRef.value.videoRef?.pause();
     videoPreviewRef.value.videoRef = null;
     updateCurrentTime(0);
-    updateVideoLength(0);
+    updateVideoMetadata(0, '');
   }
 }
 
-function exportVideo() {
+function exportVideo(title: string, fileType: string) {
   if (videoSrc.value) {
     exporting.value = true;
-    Renderer.exportProject(videoSrc.value, removedParts.value, playbackRate.value, aspect.value)
+    Renderer.exportProject(
+      videoSrc.value,
+      removedParts.value,
+      playbackRate.value,
+      aspect.value,
+      title,
+      fileType,
+    )
       .then(() => {
         exporting.value = false;
       })

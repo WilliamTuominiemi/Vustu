@@ -4,6 +4,8 @@ export const renderer = {
     removedParts: [number, number][],
     videoSpeed: number,
     aspectRatio: number,
+    title: string,
+    fileType: string,
     options = { fps: 24 },
   ) => {
     try {
@@ -17,7 +19,9 @@ export const renderer = {
 
       const { canvas, ctx } = createCanvas(video, aspectRatio);
 
-      const recorder = createRecorder(canvas, video, fps, (blob) => downloadVideo(blob, video.src));
+      const recorder = createRecorder(canvas, video, fps, fileType, (blob) =>
+        downloadVideo(blob, video.src, title, fileType),
+      );
       recorder.start();
 
       // Process video frames in batches
@@ -100,25 +104,26 @@ const createRecorder = (
   canvas: HTMLCanvasElement,
   video: HTMLVideoElement,
   fps: number,
+  fileType: string,
   onComplete: (blob: Blob) => void,
 ): MediaRecorder => {
   const stream = canvas.captureStream(fps);
   const recorder = new MediaRecorder(stream, {
-    mimeType: 'video/webm',
+    mimeType: `video/${fileType}`,
     videoBitsPerSecond: Math.min(2500000, video.videoWidth * video.videoHeight * 0.2),
   });
   const chunks: Blob[] = [];
 
   recorder.ondataavailable = (e) => chunks.push(e.data);
-  recorder.onstop = () => onComplete(new Blob(chunks, { type: 'video/webm' }));
+  recorder.onstop = () => onComplete(new Blob(chunks, { type: `video/${fileType}` }));
 
   return recorder;
 };
 
-const downloadVideo = (blob: Blob, videoSrc: string) => {
+const downloadVideo = (blob: Blob, videoSrc: string, title: string, fileType: string) => {
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = 'edited-video.webm';
+  link.download = `${title}.${fileType}`;
   link.click();
   URL.revokeObjectURL(link.href);
   URL.revokeObjectURL(videoSrc);
