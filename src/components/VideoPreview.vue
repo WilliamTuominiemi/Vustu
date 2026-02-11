@@ -32,10 +32,10 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'timeupdate', currentTime: number): void;
-  (e: 'loadedmetadata', duration: number): void;
+  (e: 'loadedmetadata', duration: number, fileName: string): void;
   (e: 'ratechange', playbackRate: number): void;
   (e: 'aspectchange', aspectRatio: number): void;
-  (e: 'update:src', src: string, name: string): void;
+  (e: 'update:src', src: string): void;
 }>();
 
 const videoRef = ref<HTMLVideoElement | null>(null);
