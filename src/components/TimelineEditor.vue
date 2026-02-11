@@ -53,11 +53,16 @@
       <button @click="returnRemovedPart()" title="Return removed part" data-testid="return-button">
         ↩️
       </button>
-    </div>
-    <div class="management-buttons">
       <button @click="ejectVideo" title="Remove video from timeline" data-testid="eject-button">
         ⏏️
       </button>
+    </div>
+    <div class="management-buttons">
+      <input placeholder="video-title" v-model="localVideoTitle" />
+      <select v-model="localFileType">
+        <option value="webm">.webm</option>
+        <option value="mp4">.mp4</option>
+      </select>
       <button
         @click="exportVideo"
         title="Export project"
@@ -101,6 +106,9 @@ const emit = defineEmits(['update:removedParts', 'changeVideo', 'exportVideo', '
 const cuts = ref<number[]>([]);
 const selectedPart = ref<[number, number] | [null, null]>([null, null]);
 const hoveredCut = ref<number | null>(null);
+
+const localVideoTitle = ref('');
+const localFileType = ref('webm');
 
 function addCut() {
   if (
@@ -180,7 +188,7 @@ function ejectVideo() {
 }
 
 function exportVideo() {
-  emit('exportVideo');
+  emit('exportVideo', localVideoTitle.value, localFileType.value);
 }
 </script>
 
@@ -253,5 +261,10 @@ function exportVideo() {
   display: flex;
   flex-direction: row;
   gap: 10px;
+}
+
+input,
+select {
+  font-size: 2em;
 }
 </style>
